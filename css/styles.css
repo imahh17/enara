@@ -50,7 +50,12 @@ body {
   font-family: var(--fuente);
   font-size: clamp(1rem, .95rem + .35vw, 1.15rem);
   line-height: 1.65;
-  overflow-x: hidden;
+  /* `clip`, NO `hidden`. En iOS, overflow-x:hidden en el body lo convierte en
+     contenedor de scroll, y el scroll del body no tiene inercia: sueltas el
+     dedo y la página se para en seco. Además pasa a ser él el scroller del
+     documento, con lo que las animaciones ligadas a scroll(root) dejan de
+     seguirlo. `clip` recorta igual pero no crea contenedor de scroll. */
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -90,8 +95,11 @@ em { font-style: normal; }
 
 /* ══════════════════ ACCESO ══════════════════ */
 
-/* Mientras no se ha entrado, la página no se puede recorrer por detrás. */
-html:not(.desbloqueado) body { overflow: hidden; }
+/* Mientras no se ha entrado, la página no se puede recorrer por detrás.
+   Va en `html` y no en `body` por lo mismo de arriba: bloquear el body lo
+   convierte en contenedor de scroll, y en iOS eso deja secuelas en la inercia
+   al desbloquear. En el elemento raíz no crea contenedor: bloquea el viewport. */
+html:not(.desbloqueado) { overflow: hidden; }
 html.desbloqueado .acceso { display: none; }
 
 .acceso {
