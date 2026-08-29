@@ -96,7 +96,8 @@ html.desbloqueado .acceso { display: none; }
 
 .acceso {
   position: fixed; inset: 0; z-index: 200;
-  display: grid; place-items: center;
+  display: flex; align-items: center; justify-content: center;
+  overflow-y: auto;                 /* si no cabe, se desplaza en vez de cortarse */
   padding: 1.5rem;
   background: radial-gradient(120% 90% at 50% 18%,
               var(--papiro-alto) 0%, var(--papiro) 55%, var(--papiro-bajo) 100%);
@@ -109,10 +110,12 @@ html.desbloqueado .acceso { display: none; }
 .acceso__caja {
   position: relative; z-index: 1;
   width: min(100%, 23rem);
+  margin: auto;                     /* centra sin recortar cuando desborda */
+  padding-block: 1rem;
   text-align: center;
 }
 .acceso__ave {
-  display: block; width: min(clamp(6.5rem, 30vw, 11rem), 30svh); height: auto;
+  display: block; width: min(clamp(7.5rem, 38vw, 12rem), 30svh); height: auto;
   margin: 0 auto .35rem;
 }
 .acceso__nombre {
