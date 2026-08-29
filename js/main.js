@@ -88,6 +88,12 @@
 
     lista('notas', DATA.astro.notas.map((n) => `<li>${n}</li>`).join(''));
 
+    // Si alguna foto todavía no está en assets/, se oculta esa carta en vez de
+    // dejar el icono de imagen rota.
+    $$('.foto-carta img').forEach((img) => {
+      img.addEventListener('error', () => { img.closest('.foto-carta').hidden = true; });
+    });
+
     if (window.CartaAstral) CartaAstral.render();
   }
 
@@ -303,6 +309,15 @@
     gsap.fromTo('.eclipse__img', { scale: .78, opacity: 0 },
       { scale: 1, opacity: 1, duration: 1.6, ease: 'power3.out',
         scrollTrigger: { trigger: '.eclipse', start: 'top 85%' } });
+
+    /* — Las dos fotos se reparten como cartas — */
+    if ($('.fotos-dia')) {
+      const disparo = { trigger: '.fotos-dia', start: 'top 85%' };
+      gsap.from('.foto-carta--izq', { rotate: 0, x: 26, y: 14, opacity: 0,
+        duration: .9, ease: 'power3.out', scrollTrigger: disparo });
+      gsap.from('.foto-carta--der', { rotate: 0, x: -26, y: 14, opacity: 0,
+        duration: .9, ease: 'power3.out', delay: .12, scrollTrigger: disparo });
+    }
 
     /* — La rueda astral se despliega — */
     const rueda = $('#rueda');
