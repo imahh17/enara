@@ -329,7 +329,11 @@
   const arrancar = () => { if (hayGsap && !quieto) animar(); };
 
   if (hayGsap && !quieto) {
-    if (document.documentElement.classList.contains('desbloqueado')) {
+    // Si ya se ha entrado —o si no hay puerta de acceso en la página— se
+    // arranca sin más. Antes esto dependía por completo de que acceso.js
+    // llegara a ejecutarse: si fallaba, no se animaba nada nunca.
+    const hayPuerta = !!$('#acceso');
+    if (!hayPuerta || document.documentElement.classList.contains('desbloqueado')) {
       arrancar();
     } else {
       document.addEventListener('enara:desbloqueado', () => {

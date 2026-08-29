@@ -19,6 +19,12 @@ python3 -m http.server 8123
 O directamente doble clic en `index.html`. Para publicarla, sube la carpeta entera a
 Netlify, Vercel o GitHub Pages; no hay nada que configurar.
 
+**Al republicar cambios, sube el número de `?v=` de los `css` y `js` en `index.html`.**
+GitHub Pages sirve esos ficheros con diez minutos de caché, así que sin cambiar la
+versión el navegador seguirá usando los antiguos y parecerá que los cambios no han
+subido. En iPhone eso se nota especialmente, porque Safari no tiene recarga forzada:
+si hace falta verlo al instante, abre la página en una pestaña privada.
+
 ## Qué hay dentro
 
 ```
