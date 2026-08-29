@@ -389,6 +389,41 @@ html.desbloqueado .acceso { display: none; }
   100% { transform: translateY(3.25rem); opacity: 0; }
 }
 
+/* ══════════════════ PARALLAX DEL HERO EN TÁCTIL ══════════════════ */
+
+/* iOS ejecuta el scroll en un hilo distinto al de JavaScript. Cualquier
+   animación calculada desde JS leyendo scrollY —lo que hace el `scrub` de
+   ScrollTrigger— llega tarde respecto al scroll real, y con la inercia del
+   dedo eso se percibe como tirones y como un rebote al final del hero.
+
+   La solución es no calcularlo desde JS: estas animaciones van ligadas al
+   scroll por el propio navegador (`animation-timeline`), que las ejecuta en
+   el compositor. El rango va en `svh`, que no cambia cuando aparece o se
+   oculta la barra de direcciones — de ahí venía el rebote.
+
+   En escritorio sigue mandando GSAP, que allí va fino y permite el suavizado. */
+@keyframes hero-ave-izq { to { transform: translate(34%,  -52%) rotate(-9deg); } }
+@keyframes hero-ave-der { to { transform: translate(-43%, -82%) rotate(7deg); } }
+@keyframes hero-paisaje { to { transform: translateY(11%); } }
+@keyframes hero-texto   { to { transform: translateY(22%); opacity: .15; } }
+
+@media (hover: none) and (pointer: coarse) {
+  @supports (animation-timeline: scroll()) {
+    .golondrina--izq, .golondrina--der,
+    .hero__paisaje, .hero__contenido {
+      animation-timeline: scroll(root block);
+      animation-range: 0 100svh;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+    }
+    .golondrina--izq { animation-name: hero-ave-izq; }
+    .golondrina--der { animation-name: hero-ave-der; }
+    .hero__paisaje   { animation-name: hero-paisaje; }
+    .hero__contenido { animation-name: hero-texto; }
+  }
+}
+
 /* ══════════════════ SECCIONES ══════════════════ */
 
 .seccion { padding-block: var(--aire); position: relative; }

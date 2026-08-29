@@ -229,30 +229,24 @@
         duration: 2.3, ease: 'power3.out', delay: 0.6 });
 
     /* — …y siguen volando con el scroll — */
-    /* Todo lo que se mueve con el scroll del hero va en una sola línea de
-       tiempo con un único ScrollTrigger. Antes eran cuatro repitiendo el mismo
-       cálculo en cada fotograma, y en móvil se notaba.
+    /* El parallax del hero SOLO lo lleva GSAP en escritorio.
+       En táctil lo hace el navegador con animaciones ligadas al scroll (ver
+       styles.css): calcularlo desde JS en iOS produce tirones, porque el
+       scroll va por otro hilo y los eventos llegan tarde. */
+    if (!esTactil) {
+      const heroConScroll = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.6,
+        },
+      });
 
-       En táctil el enganche es directo (`scrub: true`): el suavizado de 0.6 s
-       persigue al dedo con retraso y, con el scroll por inercia de iOS, eso se
-       percibe justo como el tirón que se quería evitar. */
-    const heroConScroll = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: '.hero', start: 'top top', end: 'bottom top',
-        scrub: esTactil ? true : 0.6,
-      },
-    });
-
-    // Y en táctil el recorrido es más corto: son imágenes grandes, y cuanto
-    // menos se muevan menos se nota si el navegador se salta un fotograma.
-    const r = esTactil ? 0.55 : 1;
-
-    heroConScroll
-      .to('.golondrina--izq', { xPercent:  62 * r, yPercent:  -95 * r, rotate: -9 }, 0)
-      .to('.golondrina--der', { xPercent: -78 * r, yPercent: -150 * r, rotate:  7 }, 0)
-      .to('.hero__paisaje',   { yPercent: 11 }, 0)
-      .to('.hero__contenido', { yPercent: 22, opacity: 0.15 }, 0);
+      heroConScroll
+        .to('.golondrina--izq', { xPercent:  62, yPercent:  -95, rotate: -9 }, 0)
+        .to('.golondrina--der', { xPercent: -78, yPercent: -150, rotate:  7 }, 0)
+        .to('.hero__paisaje',   { yPercent: 11 }, 0)
+        .to('.hero__contenido', { yPercent: 22, opacity: 0.15 }, 0);
+    }
 
     /* — Entradas de sección — */
     $$('[data-anim]').forEach((nodo) => {
