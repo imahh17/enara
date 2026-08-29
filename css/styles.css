@@ -756,10 +756,23 @@ html.desbloqueado .acceso { display: none; }
 /* Estado inicial solo si JS va a animar: si el script falla, se ve todo. */
 .js [data-anim], .js [data-lista] > * { opacity: 0; }
 
+/* Titileo sin movimiento: solo cambia la opacidad, la estrella no se mueve
+   ni cambia de tamaño. Por eso puede seguir activo con movimiento reducido. */
+@keyframes titila-quieto {
+  0%, 100% { opacity: var(--op, .5); }
+  50%      { opacity: calc(var(--op, .5) * .35); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js [data-anim], .js [data-lista] > * { opacity: 1 !important; transform: none !important; }
   .hero__scroll { display: none; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
                            transition-duration: .01ms !important; }
+
+  /* Excepción deliberada: las estrellas siguen titilando, porque ese efecto no
+     implica movimiento —solo opacidad— y es lo que da vida al cielo. */
+  .estrella {
+    animation: titila-quieto var(--dur, 4s) ease-in-out var(--retardo, 0s) infinite !important;
+  }
 }

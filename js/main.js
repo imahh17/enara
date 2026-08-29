@@ -155,7 +155,14 @@
     // anchas y bajas, si solo mandara el ancho, ENARA se comería el hero.
     const porAncho  = BASE * (disponible * 0.98) / ancho;
     const porAlto   = window.innerHeight * 0.32;
-    nodo.style.fontSize = Math.min(porAncho, porAlto, 272) + 'px';
+    const tamano = Math.min(porAncho, porAlto, 272);
+    nodo.style.fontSize = tamano + 'px';
+
+    // Red de seguridad: si al aplicarlo sigue saliéndose —pasa cuando se midió
+    // con la tipografía de reserva porque Inter aún no había cargado— se
+    // recorta con la medida real.
+    const real = rango.getBoundingClientRect().width;
+    if (real > disponible) nodo.style.fontSize = (tamano * disponible / real) + 'px';
   }
 
   /** Parte un texto en letras animables sin perder el texto para el lector de pantalla. */
@@ -179,6 +186,13 @@
 
   function animar() {
     gsap.registerPlugin(ScrollTrigger);
+
+    // En móvil, al ocultarse o aparecer la barra de direcciones cambia la
+    // altura del viewport y ScrollTrigger recalcularía posiciones a mitad de
+    // scroll, lo que se ve como un tirón. Esto se lo salta.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
+    const esTactil = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
     /* — Hero: el nombre entra letra a letra — */
     const nombre = $('[data-partir]');
@@ -215,21 +229,30 @@
         duration: 2.3, ease: 'power3.out', delay: 0.6 });
 
     /* — …y siguen volando con el scroll — */
-    const conElScroll = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.6 };
+    /* Todo lo que se mueve con el scroll del hero va en una sola línea de
+       tiempo con un único ScrollTrigger. Antes eran cuatro repitiendo el mismo
+       cálculo en cada fotograma, y en móvil se notaba.
 
-    gsap.to('.golondrina--izq', {
-      xPercent: 62, yPercent: -95, rotate: -9, ease: 'none',
-      scrollTrigger: conElScroll,
-    });
-    gsap.to('.golondrina--der', {
-      xPercent: -78, yPercent: -150, rotate: 7, ease: 'none',
-      scrollTrigger: conElScroll,
+       En táctil el enganche es directo (`scrub: true`): el suavizado de 0.6 s
+       persigue al dedo con retraso y, con el scroll por inercia de iOS, eso se
+       percibe justo como el tirón que se quería evitar. */
+    const heroConScroll = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: '.hero', start: 'top top', end: 'bottom top',
+        scrub: esTactil ? true : 0.6,
+      },
     });
 
-    /* — Parallax del paisaje: se queda algo atrás respecto a la página — */
-    gsap.to('.hero__paisaje', { yPercent: 11, ease: 'none', scrollTrigger: conElScroll });
-    gsap.to('.hero__contenido',      { yPercent: 22, opacity: 0.15, ease: 'none',
-                                       scrollTrigger: conElScroll });
+    // Y en táctil el recorrido es más corto: son imágenes grandes, y cuanto
+    // menos se muevan menos se nota si el navegador se salta un fotograma.
+    const r = esTactil ? 0.55 : 1;
+
+    heroConScroll
+      .to('.golondrina--izq', { xPercent:  62 * r, yPercent:  -95 * r, rotate: -9 }, 0)
+      .to('.golondrina--der', { xPercent: -78 * r, yPercent: -150 * r, rotate:  7 }, 0)
+      .to('.hero__paisaje',   { yPercent: 11 }, 0)
+      .to('.hero__contenido', { yPercent: 22, opacity: 0.15 }, 0);
 
     /* — Entradas de sección — */
     $$('[data-anim]').forEach((nodo) => {
@@ -322,11 +345,27 @@
   });
 
   // Las fuentes web cambian el ancho del texto: hay que remedir cuando cargan.
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarNombre);
+  // fonts.ready puede resolverse antes de que Inter esté realmente disponible
+  // (se ha visto en Safari), así que además se pide la fuente explícitamente y
+  // se remide al terminar la carga de la página.
+  if (document.fonts) {
+    if (document.fonts.ready) document.fonts.ready.then(ajustarNombre);
+    if (document.fonts.load) {
+      document.fonts.load('900 200px Inter').then(ajustarNombre).catch(() => {});
+    }
+  }
+  window.addEventListener('load', ajustarNombre);
 
   // Las animaciones no arrancan hasta que se pasa la puerta de acceso: si no,
   // la entrada del hero se gastaría por detrás y no se vería.
   const arrancar = () => { if (hayGsap && !quieto) animar(); };
+
+  // Al pasar la puerta hay que remedir el nombre SIEMPRE, con animaciones o
+  // sin ellas: mientras estaba tapada, la fuente podía no haber cargado aún.
+  document.addEventListener('enara:desbloqueado', () => {
+    ajustarNombre();
+    if (hayGsap && window.ScrollTrigger) ScrollTrigger.refresh();
+  });
 
   if (hayGsap && !quieto) {
     // Si ya se ha entrado —o si no hay puerta de acceso en la página— se
@@ -336,11 +375,7 @@
     if (!hayPuerta || document.documentElement.classList.contains('desbloqueado')) {
       arrancar();
     } else {
-      document.addEventListener('enara:desbloqueado', () => {
-        arrancar();
-        ajustarNombre();
-        if (window.ScrollTrigger) ScrollTrigger.refresh();
-      }, { once: true });
+      document.addEventListener('enara:desbloqueado', arrancar, { once: true });
     }
   } else {
     // Sin animaciones: nos aseguramos de que nada se quede invisible.
