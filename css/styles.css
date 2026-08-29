@@ -342,6 +342,7 @@ em { font-style: normal; }
   background: linear-gradient(var(--melocoton) 0, #A24A35 9rem, #6E4A63 55%, var(--azul-hondo) 100%);
   color: var(--hueso);
   padding-top: calc(var(--aire) + 8rem);   /* deja respirar la franja del degradado */
+  padding-bottom: 0;
 }
 .seccion--carta   { background: linear-gradient(var(--azul-hondo), var(--noche) 22%, var(--noche)); color: var(--hueso); }
 
@@ -478,6 +479,19 @@ em { font-style: normal; }
   border: 1px solid color-mix(in srgb, var(--tinta) 14%, transparent);
   border-radius: .25rem;
 }
+/* Ilustraciones de las tarjetas. Van fusionadas contra --papiro-alto (el
+   fondo de la tarjeta), así que no llevan marco: se imprimen sobre el papel.
+   Por eso mismo `contain` no deja bandas visibles — lo que sobra a los lados
+   es exactamente el mismo color que hay detrás. */
+.ilustracion {
+  display: block; width: 100%;
+  height: clamp(8rem, 22vw, 12.5rem);
+  object-fit: contain;
+  margin-bottom: 1.1rem;
+}
+/* La tarjeta ancha se lleva una ilustración mayor: es la de Bilbao. */
+.tarjetas li:last-child:nth-child(odd) .ilustracion { height: clamp(9rem, 27vw, 19rem); }
+
 .tarjetas .etiqueta {
   font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
   color: var(--coral); margin-bottom: .75rem;
@@ -493,9 +507,17 @@ em { font-style: normal; }
 @media (min-width: 60rem) { .rejilla { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
 
 .rejilla li { border-top: 2px solid var(--coral); padding-top: 1rem; }
-/* Solo dos de las seis fichas llevan imagen (la piedra y la flor). Reusa el
-   mismo marco de las efemérides, un poco mayor porque aquí hay más sitio. */
-.rejilla .retrato { width: 6.5rem; margin: .2rem 0 .9rem; }
+/* Solo dos de las seis fichas llevan imagen (la piedra y la flor). Aquí el
+   marco es apaisado, sin borde y cerrando la ficha: no es un retrato en su
+   medallón como en las efemérides, sino una estampa al pie del texto. */
+.rejilla .retrato {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 0;
+  border-radius: .25rem;
+  margin: 1.35rem 0 0;
+}
+@media (min-width: 920px) { .rejilla .retrato { width: 50%; } }
 .rejilla .dato {
   display: block; font-size: clamp(1.9rem, 1.4rem + 2.2vw, 2.9rem);
   font-variation-settings: 'wght' 800; line-height: 1.05;
@@ -516,17 +538,30 @@ em { font-style: normal; }
   border: 1px solid color-mix(in srgb, var(--hueso) 22%, transparent);
   border-radius: .25rem;
   backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
 }
 .evento__fecha  { font-size: .66rem; font-weight: 700; letter-spacing: .18em;
                   text-transform: uppercase; opacity: .7; margin-bottom: .75rem; }
 .evento__titulo { font-size: clamp(1.3rem, 1rem + 1.2vw, 1.75rem);
                   font-variation-settings: 'wght' 800; margin-bottom: .75rem; }
 .evento__texto  { opacity: .85; font-size: .98rem; }
-.evento__cifra  { margin-top: 1.25rem; padding-top: 1rem;
+.evento__cifra  { padding-top: 1rem;
                   border-top: 1px solid color-mix(in srgb, var(--hueso) 22%, transparent);
                   font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
 .evento__cifra b { font-size: 1.6rem; font-variation-settings: 'wght' 800;
                    letter-spacing: -.02em; margin-right: .4rem; }
+
+/* El eclipse, centrado, cerrando la sección del cielo. Va en gris + alfa y el
+   tono cálido lo pone el filtro; sobre el fondo oscuro la corona se enciende. */
+.eclipse { margin: clamp(3rem, 9vw, 6.5rem) 0 0; display: grid; place-items: center; }
+.eclipse__img {
+  display: block; height: auto;
+  width: clamp(13rem, 58vw, 26rem);
+  filter: sepia(.42) saturate(1.35) hue-rotate(-10deg) brightness(1.06);
+}
 
 /* ══════════════════ CARTA ASTRAL ══════════════════ */
 

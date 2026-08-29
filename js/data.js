@@ -115,12 +115,16 @@ const DATA = {
              'vuelve cada sesenta años. La anterior fue en 1966. Se le atribuyen coraje, independencia ' +
              'y unas ganas enormes de moverse.',
       etiqueta: 'Cada 60 años',
+      foto: 'assets/t-caballo.jpg',
+      alt: 'Grabado de un caballo al galope hecho de llamas',
     },
     {
       titulo: 'El verano de los eclipses',
       texto: 'España vivió el primero de tres eclipses solares consecutivos: 2026, 2027 y 2028. ' +
              'No pasaba nada parecido desde hacía más de un siglo.',
       etiqueta: 'Agosto de 2026',
+      foto: 'assets/t-eclipse.jpg',
+      alt: 'Las fases de un eclipse solar en secuencia, del disco entero a la corona',
     },
     {
       titulo: 'Naciste en plena Aste Nagusia',
@@ -129,20 +133,22 @@ const DATA = {
              'La víspera, el viernes 28, había sido el día grande. Y la noche siguiente a que nacieras ' +
              'ardió Marijaia y se acabaron las fiestas: naciste con Bilbao entero en la calle.',
       etiqueta: 'Del 22 al 30 de agosto',
+      foto: 'assets/t-astenagusia.jpg',
+      alt: 'Grabado de la Aste Nagusia: el Ayuntamiento, el Guggenheim, una trainera en la ría, fuegos artificiales y el pañuelo de fiestas',
     },
   ],
 
   curiosidades: [
     { dato: '11', titulo: 'Tu camino de vida', texto: 'Sumando las cifras de tu fecha (2+9+0+8+2+0+2+6) sale 29, y de ahí 11. En numerología el 11 es un número maestro: no se reduce más. Es una cifra de alta vibración que simboliza el despertar espiritual, la intuición elevada y el papel de guía o iluminador' },
     { dato: 'Peridoto', titulo: 'Tu piedra',
-      foto: 'assets/c-peridoto.png', foco: '49% 54%', zoom: 1.18,
+      foto: 'assets/c-peridoto.webp', foco: '50% 50%', zoom: 1, ajuste: 'cover',
       // Aquí el color es el dato —la piedra de agosto es verde—, así que
       // apenas se tiñe: el sepia de las efemérides se la comería.
       tono: 'sepia(.1) saturate(.96)',
       alt: 'Un peridoto tallado, de un verde intenso',
       texto: 'La piedra de agosto es verde y se forma en el manto de la Tierra. Alguna llegó incluso dentro de un meteorito.' },
     { dato: 'Gladiolo', titulo: 'Tu flor',
-      foto: 'assets/c-gladiolo.jpg', foco: '50% 46%', zoom: 1.05,
+      foto: 'assets/c-gladiolo.jpg', foco: '50% 48%', zoom: 1.02,
       tono: 'sepia(.12) saturate(.94)',
       alt: 'Un macizo de gladiolos de muchos colores',
       texto: 'Las flores de agosto son el gladiolo y la amapola. El gladiolo significa fuerza de carácter.' },

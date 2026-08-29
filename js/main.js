@@ -46,7 +46,8 @@
       const foco = e.foco || '50% 30%';
       return `<span class="retrato"><img src="${e.foto}" alt="${e.alt || ''}" loading="lazy"
         decoding="async" style="object-position:${foco};transform-origin:${foco}
-        ;transform:scale(${e.zoom || 1})${e.tono ? ';filter:' + e.tono : ''}"></span>`;
+        ;transform:scale(${e.zoom || 1})${e.ajuste ? ';object-fit:' + e.ajuste : ''}${
+          e.tono ? ';filter:' + e.tono : ''}"></span>`;
     };
 
     lista('nacidos', DATA.efemerides.nacidos.map((e) =>
@@ -57,14 +58,18 @@
       `<li><b>${e.año}</b>${retratoDe(e)}<span>${e.que}</span></li>`
     ).join(''));
 
-    lista('capsula', DATA.capsula2026.map((t) =>
-      `<li><p class="etiqueta">${t.etiqueta}</p><h3>${t.titulo}</h3><p>${t.texto}</p></li>`).join(''));
+    lista('capsula', DATA.capsula2026.map((t) => {
+      const ilustracion = t.foto
+        ? `<img class="ilustracion" src="${t.foto}" alt="${t.alt || ''}" loading="lazy" decoding="async">`
+        : '';
+      return `<li>${ilustracion}<p class="etiqueta">${t.etiqueta}</p>` +
+             `<h3>${t.titulo}</h3><p>${t.texto}</p></li>`;
+    }).join(''));
 
-    // La imagen va bajo el rótulo, no encima del dato: así las seis fichas
-    // alinean arriba la palabra grande y la fila no queda desigual.
+    // La imagen cierra la ficha, debajo del párrafo.
     lista('curiosidades', DATA.curiosidades.map((t) =>
       `<li><span class="dato">${t.dato}</span><h3>${t.titulo}</h3>` +
-      `${retratoDe(t)}<p>${t.texto}</p></li>`).join(''));
+      `<p>${t.texto}</p>${retratoDe(t)}</li>`).join(''));
 
     $$('[data-texto]').forEach((n) => { n.textContent = DATA.cielo[n.dataset.texto].texto; });
 
@@ -276,6 +281,11 @@
       gsap.from('.arco__horas line', { opacity: 0, duration: .5, stagger: .045,
         delay: .3, scrollTrigger: disparo });
     }
+
+    /* — El eclipse aparece abriéndose — */
+    gsap.fromTo('.eclipse__img', { scale: .78, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.6, ease: 'power3.out',
+        scrollTrigger: { trigger: '.eclipse', start: 'top 85%' } });
 
     /* — La rueda astral se despliega — */
     const rueda = $('#rueda');

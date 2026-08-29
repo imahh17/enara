@@ -39,6 +39,9 @@ assets/esquina.png    La esquina ornamental, una sola para las cuatro
 assets/n-*.jpg        Retratos de «cumplen años contigo»
 assets/h-*.jpg        Imágenes de «y un día como hoy pasó esto»
 assets/c-*            La piedra y la flor de las curiosidades
+assets/t-*.jpg        Las ilustraciones de las tarjetas de 2026
+assets/eclipse.png    El eclipse que cierra la sección del cielo
+tools/aplanar.cjs     Fusiona un PNG transparente sobre un color de fondo
 css/styles.css        Estilos. Mobile first: la base es para móvil y las @media amplían
 js/data.js            TODOS los datos de la página, en un único objeto
 js/chart.js           Dibuja la rueda de la carta astral y la tabla de posiciones
@@ -213,12 +216,54 @@ usan tres:
 - **El peridoto y el gladiolo**, al revés: apenas se tiñen. Ahí el color *es* el dato
   —«la piedra de agosto es verde»— y el sepia de las efemérides se lo habría comido.
 
-El peridoto va en PNG y no en JPEG porque su gracia es el recorte con transparencia:
-dentro del marco se ve el fondo de la ficha, como una piedra en su cajita.
+En curiosidades el marco es distinto al de efemérides: **apaisado, sin borde y al pie
+del texto**, más estampa que retrato. El peridoto va además con `object-fit: contain`
+(un campo `ajuste` en `data.js`), porque es un recorte y así se ve la piedra entera; el
+gladiolo, al ser foto, va con `cover`.
+
+El peridoto se queda en PNG con alfa y no se fusiona contra el fondo como las tarjetas
+de 2026: detrás tiene el degradado de la sección, que a lo largo de la imagen varía
+unos diez puntos de RGB, y aplanarlo dejaría un rectángulo tenue pero visible. Está
+recortado a la piedra —el original era casi todo aire— para que los kilobytes se gasten
+en detalle y no en transparencia.
 
 > **Nota sobre la imagen de los Beatles:** es la portada de *Abbey Road* (1969), no una
 > foto del concierto de 1966 del que habla el texto. Se eligió por reconocible; el `alt`
 > lo dice tal cual para no dar a entender otra cosa.
+
+## Las ilustraciones de las tarjetas de 2026
+
+**Ojo con estas tres, que llevan una trampa deliberada.**
+
+Los originales eran PNG con transparencia y pesaban **1,84 MB entre los tres**, algo
+inasumible. Pero las tarjetas tienen un fondo liso y conocido (`--papiro-alto`,
+`#F3EADC`), así que las imágenes van **fusionadas contra ese color exacto** y guardadas
+como JPEG: **410 KB**, y en pantalla el resultado es idéntico. Ni marco ni borde hacen
+falta; parecen impresas sobre el papel de la tarjeta.
+
+Ese truco es también el que permite usar `object-fit: contain` sin que se vean bandas:
+lo que sobra a los lados de la ilustración es exactamente el mismo color que hay detrás.
+
+> **Si algún día cambias `--papiro-alto`, hay que regenerar estas tres imágenes**, o
+> aparecerá un rectángulo de otro tono dentro de cada tarjeta. Es el precio de la
+> optimización, y se hace así:
+>
+> ```bash
+> node tools/aplanar.cjs original.png /tmp/plano.png "#F3EADC"
+> sips --setProperty format jpeg --setProperty formatOptions 80 /tmp/plano.png --out assets/t-loquesea.jpg
+> ```
+
+## El eclipse de la sección del cielo
+
+`assets/eclipse.png` cierra «El cielo de ese verano», centrado tras las dos tarjetas.
+Va en **gris + alfa** (234 KB frente a los 487 KB en RGBA) y el tono cálido lo pone un
+`filter`, como el resto de grabados.
+
+Es el único que **no** se fusiona contra el fondo pese a lo que pesa, y por la misma
+razón que el peridoto: detrás tiene el degradado de la sección, que a esa altura pasa
+de morado a azul noche, y aplanarlo dejaría un rectángulo. Se probó también a cuantizar
+el canal alfa, pero solo bajaba de 234 a 202 KB y arriesgaba bandas en el resplandor:
+no compensaba. Lleva `loading="lazy"`, así que no pesa en el arranque.
 
 ## El diagrama del sol
 
