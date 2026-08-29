@@ -324,8 +324,20 @@
   // Las fuentes web cambian el ancho del texto: hay que remedir cuando cargan.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarNombre);
 
+  // Las animaciones no arrancan hasta que se pasa la puerta de acceso: si no,
+  // la entrada del hero se gastaría por detrás y no se vería.
+  const arrancar = () => { if (hayGsap && !quieto) animar(); };
+
   if (hayGsap && !quieto) {
-    animar();
+    if (document.documentElement.classList.contains('desbloqueado')) {
+      arrancar();
+    } else {
+      document.addEventListener('enara:desbloqueado', () => {
+        arrancar();
+        ajustarNombre();
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      }, { once: true });
+    }
   } else {
     // Sin animaciones: nos aseguramos de que nada se quede invisible.
     $$('[data-anim]').forEach((n) => { n.style.opacity = 1; });

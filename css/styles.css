@@ -88,6 +88,85 @@ em { font-style: normal; }
   50%      { opacity: calc(var(--op, .5) * .25);  transform: scale(.78); }
 }
 
+/* ══════════════════ ACCESO ══════════════════ */
+
+/* Mientras no se ha entrado, la página no se puede recorrer por detrás. */
+html:not(.desbloqueado) body { overflow: hidden; }
+html.desbloqueado .acceso { display: none; }
+
+.acceso {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  padding: 1.5rem;
+  background: radial-gradient(120% 90% at 50% 18%,
+              var(--papiro-alto) 0%, var(--papiro) 55%, var(--papiro-bajo) 100%);
+  isolation: isolate;
+}
+.acceso__grano {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: .26; mix-blend-mode: multiply; pointer-events: none;
+}
+.acceso__caja {
+  position: relative; z-index: 1;
+  width: min(100%, 23rem);
+  text-align: center;
+}
+.acceso__ave {
+  display: block; width: min(clamp(6.5rem, 30vw, 11rem), 30svh); height: auto;
+  margin: 0 auto .35rem;
+}
+.acceso__nombre {
+  font-size: min(clamp(2.2rem, 11vw, 3.4rem), 9svh);
+  font-variation-settings: 'wght' 900;
+  letter-spacing: -.035em; line-height: 1;
+  color: var(--tinta);
+}
+.acceso__pie {
+  margin-top: .5rem;
+  font-size: .72rem; font-weight: 600; letter-spacing: .3em;
+  color: var(--tinta-suave);
+}
+
+.acceso__form { margin-top: min(clamp(1.25rem, 5vw, 2rem), 4svh); text-align: left; }
+.acceso__campo { margin-bottom: min(1rem, 2.2svh); }
+.acceso__campo label {
+  display: block; margin-bottom: .35rem;
+  font-size: .68rem; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--tinta-suave);
+}
+.acceso__campo input {
+  width: 100%; padding: .7rem .85rem;
+  font: inherit; font-size: 1rem; color: var(--tinta);
+  background: color-mix(in srgb, var(--papiro-alto) 70%, #fff);
+  border: 1px solid color-mix(in srgb, var(--tinta) 28%, transparent);
+  border-radius: .25rem;
+}
+.acceso__campo input:focus-visible {
+  outline: 2px solid var(--coral); outline-offset: 1px;
+  border-color: transparent;
+}
+.acceso__boton {
+  width: 100%; margin-top: .5rem; padding: .8rem 1rem;
+  font: inherit; font-size: .82rem; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--papiro-alto); background: var(--tinta);
+  border: 0; border-radius: .25rem; cursor: pointer;
+}
+.acceso__boton:hover { background: color-mix(in srgb, var(--tinta) 85%, var(--coral)); }
+.acceso__aviso {
+  min-height: 1.4em; margin-top: .75rem;
+  font-size: .85rem; color: #A2402C;
+}
+
+/* Sacudida al fallar: pequeña, sin drama. */
+.acceso--falla .acceso__caja { animation: sacude .42s ease; }
+@keyframes sacude {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  45% { transform: translateX(6px); }
+  70% { transform: translateX(-3px); }
+}
+
 /* ══════════════════ HERO ══════════════════ */
 
 .hero {

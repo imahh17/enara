@@ -2,7 +2,12 @@
 <html lang="es" class="no-js">
 <head>
 <meta charset="utf-8">
-<script>document.documentElement.classList.replace('no-js','js')</script>
+<script>
+  document.documentElement.classList.replace('no-js','js');
+  // Antes de pintar nada: si ya se entró en este navegador, no se ve la puerta.
+  try { if (localStorage.getItem('enara-acceso') === 'e64929a4')
+    document.documentElement.classList.add('desbloqueado'); } catch (e) {}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enara · 29 de agosto de 2026</title>
 <meta name="description" content="El día que nació Enara en Bilbao: el cielo, el tiempo que hizo, su carta astral y todo lo que pasaba en el mundo.">
@@ -14,6 +19,36 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'><path fill='%233A2A1C' d='M36 92C40 82 50 74 64 74S86 80 94 88c24 10 52 18 76 24 30 4 72-6 118-34-20 16-42 28-62 36-10 4-20 7-29 9 17 10 37 27 59 51-26-16-54-32-80-44-36-4-66-12-88-20-14-6-28-8-38-8-8-1-14-4-14-8Z'/><path fill='%233A2A1C' d='M88 86c20-28 52-60 96-84-8 36-30 72-60 98-14 4-30-4-36-14Z'/></svg>">
 </head>
 <body>
+
+<!-- ══════════════════════════ ACCESO ══════════════════════════ -->
+<div class="acceso" id="acceso" role="dialog" aria-modal="true" aria-label="Acceso a la página de Enara">
+  <svg class="acceso__grano" aria-hidden="true" focusable="false">
+    <rect width="100%" height="100%" filter="url(#grano)"/>
+  </svg>
+
+  <div class="acceso__caja">
+    <img class="acceso__ave" src="assets/golondrina.png" width="720" height="480"
+         alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+
+    <p class="acceso__nombre">ENARA</p>
+    <p class="acceso__pie">29 · 08 · 2026</p>
+
+    <form class="acceso__form" autocomplete="on">
+      <p class="acceso__campo">
+        <label for="acceso-usuario">Usuario</label>
+        <input id="acceso-usuario" name="username" type="text"
+               autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </p>
+      <p class="acceso__campo">
+        <label for="acceso-clave">Contraseña</label>
+        <input id="acceso-clave" name="password" type="password"
+               autocomplete="current-password" required>
+      </p>
+      <button class="acceso__boton" type="submit">Entrar</button>
+      <p class="acceso__aviso" id="acceso-aviso" role="alert" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
 
 <a class="saltar" href="#contenido">Saltar al contenido</a>
 
@@ -305,6 +340,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="js/acceso.js"></script>
 <script src="js/data.js"></script>
 <script src="js/chart.js"></script>
 <script src="js/main.js"></script>
