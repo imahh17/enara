@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;font:16px/1.5 system-ui;background:#E7D8C6;color:#3A2A1C}
+  .hero{min-height:100svh;display:grid;place-items:center;position:relative;overflow:hidden;
+        background:linear-gradient(#F3EADC,#DCCBB4)}
+  .hero h1{font-size:15vw;margin:0}
+  .bicho{position:absolute;top:20%;left:5%;width:38vw;height:24vw;border-radius:.4rem;
+         background:#3A2A1C}
+  section{padding:3rem 1.25rem;border-top:1px solid #0002}
+  .aviso{position:fixed;left:0;right:0;bottom:0;background:#3A2A1C;color:#F3EADC;
+         padding:.6rem;text-align:center;font-size:.85rem;z-index:9}
+  
+@keyframes vuela { to { transform: translate(60%,-60%); } }
+.bicho { animation-name: vuela; animation-timeline: scroll(root block);
+         animation-range: 0 700px; animation-duration: auto;
+         animation-timing-function: linear; animation-fill-mode: both; }
+
+</style></head><body>
+<div class="hero"><div class="bicho"></div><h1>PRUEBA C</h1></div>
+<section><h2>Sección 1</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<section><h2>Sección 2</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<section><h2>Sección 3</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<section><h2>Sección 4</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<section><h2>Sección 5</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<section><h2>Sección 6</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<section><h2>Sección 7</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<section><h2>Sección 8</h2><p>Texto para dar altura y poder lanzar el dedo con inercia. Repite el gesto varias veces: apoya, empuja y suelta.</p></section>
+<p class="aviso">C · igual que B pero el rango en px en vez de svh.</p>
+</body></html>
