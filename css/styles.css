@@ -8,6 +8,10 @@
   /* Tono muestreado del propio papel de assets/paisaje-1672.jpg, para que el
      dibujo funda con el fondo sin que se vea el canto de la imagen. */
   --papiro:       #E7D8C6;
+  /* OJO: assets/t-*.jpg están fusionadas contra este color exacto (venían con
+     transparencia y así pesan un 78% menos). Si lo cambias, hay que volver a
+     generarlas con tools/aplanar.cjs o saldrá un rectángulo de otro tono
+     dentro de las tarjetas de 2026. */
   --papiro-alto:  #F3EADC;
   --papiro-bajo:  #DCCBB4;
   --tinta:        #3A2A1C;
