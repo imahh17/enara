@@ -481,7 +481,19 @@ html.desbloqueado .acceso { display: none; }
 }
 
 /* Fondos por sección — el día avanza de amanecer a noche */
-.seccion--nombre  { background: linear-gradient(var(--papiro), var(--hueso)); }
+.seccion--nombre  {
+  background: linear-gradient(var(--papiro), var(--hueso));
+  /* Marco de referencia de la cabeza, y recorte de lo que se sale.
+     `clip` y no `hidden`: no crea contenedor de scroll, que en iOS es lo que
+     mataba la inercia cuando estaba en el body. */
+  position: relative;
+  overflow: clip;
+}
+/* Plano y exactamente --hueso: es el color contra el que están horneados los
+   dos gatos (ver tools/preparar-imagen.py), así que tiene que coincidir al
+   byte o se vería el rectángulo de cada JPEG. La sección del nombre acaba en
+   --hueso y la del día empieza en --hueso, así que encaja sin costura. */
+.seccion--tamano  { background: var(--hueso); }
 .seccion--dia     { background: linear-gradient(var(--hueso), var(--melocoton)); }
 .seccion--efemerides { background: linear-gradient(var(--melocoton), var(--hueso)); }
 .seccion--capsula { background: var(--hueso); }
@@ -493,6 +505,9 @@ html.desbloqueado .acceso { display: none; }
   padding-bottom: 0;
 }
 .seccion--carta   { background: linear-gradient(var(--azul-hondo), var(--noche) 22%, var(--noche)); color: var(--hueso); }
+#nombre {
+  padding-top: 10rem;
+}
 
 /* ══════════════════ SÍMBOLOS (nombre) ══════════════════ */
 
@@ -516,6 +531,113 @@ html.desbloqueado .acceso { display: none; }
 .fichas em { font-family: var(--serif); font-style: italic; }
 
 @media (min-width: 48rem) { .fichas { grid-template-columns: repeat(4, 1fr); } }
+
+/* ══════════════════ EL NOMBRE: LA CABEZA ══════════════════ */
+
+/* Adorno de fondo: grande, sangrando por el borde derecho y por detrás del
+   texto (el .envoltorio ya va en z-index 1). El PNG está en gris + alfa, que
+   pesa un tercio que en color; el tono cálido lo pone el filtro, igual que en
+   las esquinas del hero. No se anima, así que el filtro no cuesta por
+   fotograma.
+
+   En móvil el texto ocupa todo el ancho y la cabeza queda justo detrás, así
+   que allí baja de opacidad y se va más al borde: con 0.7 el plumaje competía
+   con el párrafo y no se leía. */
+.nombre__cabeza {
+  position: absolute; z-index: 0; pointer-events: none;
+  width: 74vw; height: auto;
+  /* Anclada arriba, no centrada: en móvil la sección es muy alta —titular,
+     entradilla, tres fichas y la lista— y centrada caía en mitad de las fichas
+     como un fragmento suelto. Arriba acompaña al titular, igual que hace en
+     escritorio. */
+  right: -26vw; top: 5rem;
+  opacity: .34;
+  filter: sepia(.3) saturate(.85) hue-rotate(-10deg) contrast(1.02);
+}
+@media (min-width: 920px) {
+  /* Aquí el texto solo llega a media caja, así que la cabeza puede ir entera
+     al lado y a plena opacidad. */
+  .nombre__cabeza {
+    width: 45vw;
+    right: -4vw;
+    top: 35%;
+    transform: translateY(-48%);
+    opacity: .7;
+  }
+}
+
+/* ══════════════════ COMPARATIVA DE TAMAÑO ══════════════════ */
+
+.regla {
+  position: relative;
+  max-width: 34rem;
+  margin-top: clamp(2.5rem, 7vw, 3.5rem);
+  margin-left: auto;
+  margin-right: auto;
+  /* Banda libre arriba para el rótulo de Enara: si no, cae sobre las orejas
+     del primer gato. Las dos verticales sí la recorren. */
+  padding-top: 2.1rem;
+
+  /* Las colas se salen por la izquierda de la línea de la grupa; el ancho ya
+     las tiene en cuenta (el lienzo mide 70,43 cm y la medida arranca en el
+     21%), así que no hay nada que recortar. */
+}
+
+/* Línea de la grupa: el cero de la medida. */
+.regla::before {
+  content: ''; position: absolute; z-index: 2;
+  left: var(--inicio); top: 0; bottom: 0;
+  border-left: 1px dashed color-mix(in srgb, var(--tinta) 38%, transparent);
+}
+
+/* Enara no se dibuja —no hay retrato de recién nacida que no sea inventado—,
+   así que su medida es la línea de referencia que cruza a los dos gatos. Se ve
+   de un vistazo que el hocico de Oliver la pasa y el de Tyson no llega. */
+/* OJO: la línea NO puede ser el `border-left` de la caja del rótulo con un
+   translateX(-100%). El borde se mueve con la transformación, y la línea
+   acababa dibujada 30 puntos a la izquierda de su sitio —marcando 29 cm en vez
+   de 51—. Aquí la caja llega hasta --x, el texto va pegado a su derecha y la
+   línea es un ::after en right:0, que cae exactamente en --x. */
+.regla__hito {
+  position: absolute; z-index: 3;
+  left: 0; right: calc(100% - var(--x)); top: 0; bottom: 0;
+  font-size: .74rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--coral); white-space: nowrap;
+  padding-right: .5rem;
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  pointer-events: none;
+}
+.regla__hito::after {
+  content: ''; position: absolute; right: 0; top: 0; bottom: 0;
+  border-left: 2px solid var(--coral);
+}
+.regla__hito b { font-weight: 800; margin-right: .4em; letter-spacing: .06em; }
+
+.regla__fila { position: relative; margin: 0; }
+.regla__fila img {
+  position: relative; left: var(--izq); width: var(--ancho);
+  height: auto; display: block;
+}
+
+/* La medida de cada gato: del cero a su hocico, con el rótulo centrado. */
+.regla__fila figcaption {
+  position: absolute; z-index: 2;
+  left: var(--inicio); right: calc(100% - var(--fin));
+  bottom: -.35rem;
+  border-top: 1px solid color-mix(in srgb, var(--tinta) 45%, transparent);
+  padding-top: .45rem;
+  font-size: .8rem; text-align: center; white-space: nowrap;
+  color: color-mix(in srgb, var(--tinta) 78%, transparent);
+}
+/* Los topes del extremo, para que se lea como una cota y no como un subrayado. */
+.regla__fila figcaption::before,
+.regla__fila figcaption::after {
+  content: ''; position: absolute; top: -4px; width: 1px; height: 9px;
+  background: color-mix(in srgb, var(--tinta) 45%, transparent);
+}
+.regla__fila figcaption::before { left: 0; }
+.regla__fila figcaption::after  { right: 0; }
+.regla__fila figcaption b { font-weight: 700; margin-right: .35em; }
 
 /* ══════════════════ EL DÍA ══════════════════ */
 
@@ -588,32 +710,54 @@ html.desbloqueado .acceso { display: none; }
 
 /* ══════════════════ EFEMÉRIDES ══════════════════ */
 
-.dos-columnas { display: grid; gap: clamp(3rem, 8vw, 4.5rem); margin-top: clamp(2.5rem, 7vw, 4rem); }
-@media (min-width: 48rem) { .dos-columnas { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+/* Las dos listas se ponen en paralelo muy tarde, y a propósito.
+   Antes lo hacían a 48rem: cada una se quedaba con media pantalla y, con una
+   foto y un párrafo de 320 caracteres —el del ataque de los conejos—, el texto
+   caía a 39 caracteres por línea y nueve líneas. Medido a 940px seguía igual de
+   estrecho, así que el corte está donde cada columna da para una medida de
+   lectura decente: unos 50 caracteres por línea. Por debajo, cada lista ocupa
+   el ancho entero, que se lee mejor aunque haya que bajar más. */
+.dos-columnas {
+  display: grid;
+  gap: clamp(3rem, 8vw, 4.5rem);
+  margin-top: clamp(2.5rem, 7vw, 4rem);
+}
+/* Apiladas, cada lista se acota: el envoltorio llega a 68rem y sin tope la raya
+   separadora corría 1088px con solo 440 de texto —el párrafo tiene su propia
+   medida máxima—, así que la mitad de cada entrada era raya y aire. */
+.dos-columnas > div { max-width: 35rem; }
 
-.linea { display: grid; gap: 1.5rem; }
+@media (min-width: 1180px) {
+  .dos-columnas { grid-template-columns: 1fr 1fr; gap: clamp(3rem, 5vw, 5rem); }
+  /* En paralelo manda la columna, que ya es más estrecha que ese tope. */
+  .dos-columnas > div { max-width: none; }
+}
+
+/* Cada entrada son DOS columnas: retrato y bloque de texto. El año va dentro
+   del texto como antetítulo (ver js/main.js). */
+.linea { display: grid; gap: clamp(1.6rem, 4vw, 2.1rem); }
 .linea li {
-  display: grid; grid-template-columns: 4.2rem 1fr; gap: 1rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--tinta) 15%, transparent);
+  display: grid;
+  grid-template-columns: clamp(4.75rem, 19vw, 6.5rem) 1fr;
+  gap: clamp(1rem, 3vw, 1.4rem);
+  /* Arriba, no centrado: hay entradas de una línea y otras de nueve, y con
+     `center` la foto se quedaba flotando en mitad de una fila altísima. */
+  align-items: start;
+  padding-bottom: clamp(1.6rem, 4vw, 2.1rem);
+  border-bottom: 1px solid color-mix(in srgb, var(--tinta) 13%, transparent);
 }
 .linea li:last-child { border-bottom: 0; padding-bottom: 0; }
 
-/* Lista con retrato. La foto va entre el año y el texto, y se encuadra con
-   object-position —el foco de cada una está en data.js— en vez de recortar
-   los ficheros: así el encuadre se ajusta sin volver a exportar nada. */
-.linea--retratos li {
-  grid-template-columns: 3.1rem 4.6rem 1fr;
-  /* En estrecho hay entradas que se van a doce líneas y la foto se quedaba
-     flotando en mitad de una fila altísima; arriba acompaña al texto. */
-  align-items: start;
-}
-@media (min-width: 48rem) { .linea--retratos li { align-items: center; } }
+/* El marco recorta y la imagen de dentro se encuadra y se acerca. El origen
+   del zoom es el mismo punto que el encuadre, para que al acercar no se escape
+   lo que importa de la foto. Los focos van en data.js, en porcentajes, así que
+   aguantan el cambio de proporción sin retocar nada.
+   4/5 para todas: son retratos, y en cuadrado se les corta la frente. */
 .retrato {
-  display: block; width: 4.6rem; aspect-ratio: 1;
+  display: block; width: 100%; aspect-ratio: 4 / 5;
   overflow: hidden;                 /* el marco recorta el zoom de dentro */
-  border-radius: .3rem;
-  border: 1px solid color-mix(in srgb, var(--tinta) 22%, transparent);
+  border-radius: .35rem;
+  border: 1px solid color-mix(in srgb, var(--tinta) 20%, transparent);
 }
 .retrato img {
   display: block; width: 100%; height: 100%; object-fit: cover;
@@ -622,14 +766,19 @@ html.desbloqueado .acceso { display: none; }
      entre sí y con el resto de la página, sin apagarlos del todo. */
   filter: sepia(.34) saturate(.88) contrast(1.04);
 }
-@media (min-width: 48rem) {
-  .linea--retratos li { grid-template-columns: 3.4rem 5.4rem 1fr; }
-  .retrato { width: 5.4rem; }
+
+.ficha b {
+  display: block;
+  font-size: .78rem; letter-spacing: .12em;
+  font-variation-settings: 'wght' 700;
+  opacity: .5; font-feature-settings: 'tnum';
+  margin-bottom: .35rem;
 }
-.linea b { font-variation-settings: 'wght' 800; font-size: 1.05rem;
-           letter-spacing: -.01em; opacity: .55; font-feature-settings: 'tnum'; }
-.linea strong { display: block; font-weight: 700; }
-.linea span   { opacity: .72; font-size: .95rem; }
+.ficha strong {
+  display: block; font-weight: 700; font-size: 1.06rem;
+  letter-spacing: -.01em; line-height: 1.25; margin-bottom: .25rem;
+}
+.ficha p { opacity: .74; font-size: .95rem; max-width: 46ch; }
 
 /* ══════════════════ CÁPSULA 2026 ══════════════════ */
 

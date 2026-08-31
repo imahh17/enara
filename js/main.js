@@ -64,12 +64,18 @@
           e.tono ? ';filter:' + e.tono : ''}"></span>`;
     };
 
+    /* El año va DENTRO del bloque de texto, como antetítulo, no en una columna
+       propia: con tres columnas —año, foto, texto— quedaban dos calles verticales
+       que partían la lectura en tres y dejaban el año huérfano en una franja de
+       50px. Con dos columnas el texto gana ese ancho y se lee de un tirón. */
     lista('nacidos', DATA.efemerides.nacidos.map((e) =>
-      `<li><b>${e.año}</b>${retratoDe(e)}<span><strong>${e.quien}</strong>${e.que}</span></li>`
+      `<li>${retratoDe(e)}<div class="ficha"><b>${e.año}</b>` +
+      `<strong>${e.quien}</strong><p>${e.que}</p></div></li>`
     ).join(''));
 
     lista('hechos', DATA.efemerides.hechos.map((e) =>
-      `<li><b>${e.año}</b>${retratoDe(e)}<span>${e.que}</span></li>`
+      `<li>${retratoDe(e)}<div class="ficha"><b>${e.año}</b>` +
+      `<p>${e.que}</p></div></li>`
     ).join(''));
 
     lista('capsula', DATA.capsula2026.map((t) => {

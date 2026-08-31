@@ -31,7 +31,7 @@
 <!-- El ?v= de css y js es para saltarse la caché: GitHub Pages sirve estos
      ficheros con max-age=600, así que tras republicar el navegador seguiría
      usando los viejos. SUBE ESE NÚMERO CADA VEZ QUE PUBLIQUES CAMBIOS. -->
-<link rel="stylesheet" href="css/styles.css?v=23">
+<link rel="stylesheet" href="css/styles.css?v=35">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'><path fill='%233A2A1C' d='M36 92C40 82 50 74 64 74S86 80 94 88c24 10 52 18 76 24 30 4 72-6 118-34-20 16-42 28-62 36-10 4-20 7-29 9 17 10 37 27 59 51-26-16-54-32-80-44-36-4-66-12-88-20-14-6-28-8-38-8-8-1-14-4-14-8Z'/><path fill='%233A2A1C' d='M88 86c20-28 52-60 96-84-8 36-30 72-60 98-14 4-30-4-36-14Z'/></svg>">
 </head>
 <body>
@@ -127,6 +127,10 @@
 
 <!-- ══════════════════════════ SU NOMBRE ══════════════════════════ -->
 <section class="seccion seccion--nombre" id="nombre">
+  <!-- Adorno de fondo, sin contenido que anunciar: lo que dice la imagen ya lo
+       dice el titular justo al lado. De ahí el alt vacío. -->
+  <img class="nombre__cabeza" src="assets/golondrina-cabeza.png"
+       width="460" height="460" loading="lazy" decoding="async" alt="" aria-hidden="true">
   <div class="envoltorio">
     <p class="rotulo" data-anim>El nombre</p>
     <h2 class="titulo" data-anim>Enara quiere decir<br><em>golondrina</em></h2>
@@ -142,6 +146,41 @@
       <div><dt>Cuántas sois</dt><dd>unas 3.000</dd></div>
       <div><dt>Dónde</dt><dd>sobre todo en Gipuzkoa</dd></div>
     </dl>
+  </div>
+</section>
+
+<!-- ══════════════════════════ TAMAÑO ══════════════════════════
+     Los porcentajes de --izq, --ancho y --fin NO son a ojo: salen de medir en
+     cada dibujo dónde está la grupa y dónde el hocico, y de escalar cada gato
+     para que su cuerpo sin cola valga sus centímetros reales. El dibujo de
+     Tyson es más largo en píxeles que el de Oliver aunque él sea 3 cm más
+     corto, así que sin esa corrección saldría al revés. La cuenta está en el
+     historial; el resultado son 0,70432 cm por cada 1% para los tres. -->
+<section class="seccion seccion--tamano" id="tamano">
+  <div class="envoltorio">
+    <p class="rotulo" data-anim>Cuánto es eso</p>
+    <h2 class="titulo" data-anim>Medías <em>51 centímetros</em></h2>
+    <p class="entradilla" data-anim>
+      Casi exactamente lo que miden Oliver y Tyson, sin contar las colas. Naciste del tamaño de los gatos de casa, justo entre los dos.
+    </p>
+
+    <div class="regla" data-anim style="--inicio: 21%">
+      <span class="regla__hito" style="--x: 93.41%"><b>Enara</b> 51 cm</span>
+
+      <figure class="regla__fila">
+        <img src="assets/gato-oliver.jpg" width="620" height="465"
+             loading="lazy" decoding="async" style="--izq: 0%; --ancho: 100%"
+             alt="Oliver, un gato atigrado pardo, de perfil y caminando">
+        <figcaption style="--fin: 96.25%"><b>Oliver</b> 53 cm</figcaption>
+      </figure>
+
+      <figure class="regla__fila">
+        <img src="assets/gato-tyson.jpg" width="620" height="465"
+             loading="lazy" decoding="async" style="--izq: 2.38%; --ancho: 93.1%"
+             alt="Tyson, un gato atigrado naranja, de perfil y caminando">
+        <figcaption style="--fin: 91.99%"><b>Tyson</b> 50 cm</figcaption>
+      </figure>
+    </div>
   </div>
 </section>
 
@@ -244,11 +283,11 @@
     <div class="dos-columnas">
       <div>
         <h3 class="subtitulo" data-anim>Cumplen años contigo</h3>
-        <ul class="linea linea--retratos" data-lista="nacidos"></ul>
+        <ul class="linea" data-lista="nacidos"></ul>
       </div>
       <div>
         <h3 class="subtitulo" data-anim>Y un día como hoy pasó esto</h3>
-        <ul class="linea linea--retratos" data-lista="hechos"></ul>
+        <ul class="linea" data-lista="hechos"></ul>
       </div>
     </div>
   </div>
@@ -367,9 +406,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script src="js/acceso.js?v=23"></script>
-<script src="js/data.js?v=23"></script>
-<script src="js/chart.js?v=23"></script>
-<script src="js/main.js?v=23"></script>
+<script src="js/acceso.js?v=35"></script>
+<script src="js/data.js?v=35"></script>
+<script src="js/chart.js?v=35"></script>
+<script src="js/main.js?v=35"></script>
 </body>
 </html>

@@ -103,8 +103,9 @@ const DATA = {
         tono: 'sepia(.6) saturate(.5) contrast(1.06)',
         alt: 'Retrato dibujado de Michael Faraday rodeado de esquemas de circuitos' },
       { año: 1966, que: 'Los Beatles dan su último concierto de pago, en San Francisco.',
-        foto: 'assets/h-beatles.jpg', foco: '50% 64%', zoom: 1.35,
-        alt: 'Portada del disco Abbey Road: los cuatro Beatles cruzando un paso de cebra' },
+        foto: 'assets/h-beatles-pepper.jpg', foco: '52% 48%', zoom: 1.15,
+        alt: 'Los cuatro Beatles con los uniformes de raso de Sgt. Pepper, '
+             + 'bajo un rótulo con su nombre' },
     ],
   },
 
