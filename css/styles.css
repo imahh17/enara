@@ -267,7 +267,6 @@ html.desbloqueado .acceso { display: none; }
   object-fit: cover;
   object-position: center bottom;
   pointer-events: none;
-  will-change: transform;
   /* El dibujo emerge del papel: arriba casi transparente y abajo pleno. Así
      el cielo y los montes lejanos se funden con el papiro —dejando leer el
      texto que cae encima— y el primer plano queda a plena tinta. */
@@ -297,7 +296,9 @@ html.desbloqueado .acceso { display: none; }
   position: absolute;
   width: clamp(9.5rem, 34vw, 21rem);
   pointer-events: none;
-  will-change: transform;
+  /* Sin `will-change` aquí: en táctil no hay parallax, así que tras la entrada
+     nada mueve este elemento y la capa de compositor quedaba reservada para
+     siempre sin usarse. Se pide solo donde GSAP la va a animar (más abajo). */
 }
 /* El tono cálido va en el <img>, NO en .golondrina.
    .golondrina es el elemento que lleva la animación ligada al scroll, y un
@@ -422,78 +423,33 @@ html.desbloqueado .acceso { display: none; }
   100% { transform: translateY(3.25rem); opacity: 0; }
 }
 
-/* ══════════════════ PARALLAX DEL HERO EN TÁCTIL ══════════════════ */
-
-/* iOS ejecuta el scroll en un hilo distinto al de JavaScript. Cualquier
-   animación calculada desde JS leyendo scrollY —lo que hace el `scrub` de
-   ScrollTrigger— llega tarde respecto al scroll real, y con la inercia del
-   dedo eso se percibe como tirones y como un rebote al final del hero.
-
-   La solución es no calcularlo desde JS: estas animaciones van ligadas al
-   scroll por el propio navegador (`animation-timeline`), que las ejecuta en
-   el compositor. El rango va en `svh`, que no cambia cuando aparece o se
-   oculta la barra de direcciones — de ahí venía el rebote.
-
-   En escritorio sigue mandando GSAP, que allí va fino y permite el suavizado. */
-@keyframes hero-ave-izq { to { transform: translate(34%,  -52%) rotate(-9deg); } }
-@keyframes hero-ave-der { to { transform: translate(-43%, -82%) rotate(7deg); } }
-@keyframes hero-paisaje { to { transform: translateY(11%); } }
-@keyframes hero-texto   { to { transform: translateY(22%); opacity: .15; } }
-
-@media (hover: none) and (pointer: coarse) {
-  @supports (animation-timeline: scroll()) {
-    .golondrina--izq, .golondrina--der,
-    .hero__paisaje, .hero__contenido {
-      animation-timeline: scroll(root block);
-      animation-range: 0 var(--rango-hero, 100svh);
-      animation-duration: auto;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-    }
-    .golondrina--izq { animation-name: hero-ave-izq; }
-    .golondrina--der { animation-name: hero-ave-der; }
-    .hero__paisaje   { animation-name: hero-paisaje; }
-    .hero__contenido { animation-name: hero-texto; }
-  }
+/* Las capas de compositor se piden solo donde GSAP hace el parallax: mismas
+   condiciones que la puerta de js/main.js (no táctil y 920px o más). */
+@media (hover: hover) and (pointer: fine) and (min-width: 920px) {
+  .golondrina, .hero__paisaje { will-change: transform; }
 }
 
-/* ── Modos de diagnóstico ──────────────────────────────────────────────────
-   Se activan por parámetro en la URL y sirven para aislar en un móvil real de
-   dónde viene un scroll con tirones. Son independientes entre sí.
+/* ══════════════════ PARALLAX DEL HERO ══════════════════
 
-   ?sinparallax=1  quita SOLO las animaciones ligadas al scroll del hero.
-   ?sinsuave=1     quita scroll-behavior: smooth.
-   ?ligero=1       lo quita todo: pintado caro Y animaciones.
+   Solo en escritorio, y lo lleva GSAP (ver js/main.js). En táctil NO hay
+   parallax en el hero: las golondrinas entran por los lados al cargar y se
+   quedan quietas.
 
-   (El ?ligero=1 anterior tenía un fallo: no desactivaba animation-name ni
-   animation-timeline, justo lo único exclusivo del hero. Ya lo hace.) */
+   El motivo, tras medirlo en un iPhone real: iOS desplaza la página en un hilo
+   distinto al de JavaScript, así que las animaciones tuvieron que pasarse a
+   `animation-timeline`, ligadas al scroll por el propio navegador. Pero
+   mientras la barra de direcciones se pliega, el alto del viewport cambia 29
+   veces en un solo gesto, y el progreso de esas animaciones daba un pico: la
+   golondrina saltaba hacia arriba y el paisaje hacia abajo a la vez —en
+   direcciones opuestas, la firma de un salto de progreso—, y ENARA cambiaba de
+   opacidad de golpe. Se probó a fijar el rango en píxeles para que no hubiera
+   ninguna unidad de viewport que resolver, y siguió pasando. El fallo está por
+   debajo de lo que se puede tocar desde la página, así que en táctil se
+   renuncia al parallax del hero y se queda la entrada, que va por tiempo y no
+   por scroll y por tanto no puede descuadrarse.
 
-.sinparallax .golondrina--izq, .sinparallax .golondrina--der,
-.sinparallax .hero__paisaje,   .sinparallax .hero__contenido,
-.ligero .golondrina--izq, .ligero .golondrina--der,
-.ligero .hero__paisaje,   .ligero .hero__contenido {
-  animation-name: none !important;
-  animation-timeline: auto !important;
-}
-
-/* ?sinfiltro=1  quita SOLO el filtro de las golondrinas y la máscara del
-   paisaje, dejando las animaciones intactas. Aísla "coste de pintado" de
-   "animación mal sincronizada", que es lo que ?ligero=1 no distinguía. */
-.sinfiltro .golondrina, .sinfiltro .golondrina__ave { filter: none !important; }
-.sinfiltro .hero__paisaje {
-  -webkit-mask-image: none !important; mask-image: none !important;
-}
-
-.sinsuave, .ligero { scroll-behavior: auto !important; }
-.sinancla, .sinancla body, .sinancla .hero { overflow-anchor: none !important; }
-
-.ligero .hero__grano { display: none; }
-.ligero .hero__paisaje { -webkit-mask-image: none; mask-image: none; }
-.ligero .golondrina, .ligero .golondrina__ave { filter: none; }
-.ligero .hero__lamina::after { display: none; }
-.ligero .esquina { display: none; }
-.ligero .golondrina, .ligero .golondrina__ave,
-.ligero .hero__paisaje, .ligero .hero__nombre .l { will-change: auto; }
+   Para recuperar alguna de las capas en táctil habría que devolver aquí su
+   @keyframes y su animation-name; están en el historial de git. */
 
 /* ══════════════════ SECCIONES ══════════════════ */
 

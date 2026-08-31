@@ -155,30 +155,6 @@
      si cambia el ancho (rotación): NO sigue a la barra de direcciones de iOS,
      porque recalcular el H1 a mitad de scroll fuerza un layout y puede cambiar
      la altura del documento en plena inercia. */
-  /* Rango del parallax del hero, fijado en píxeles una sola vez.
-     Medido en un iPhone real, la barra de direcciones cambia el alto del
-     viewport 29 veces en un solo gesto. Mientras eso pasa el compositor va
-     resolviendo el `100svh` del animation-range, y ahí es donde el progreso da
-     un pico: el ave sube y el paisaje baja de golpe, en direcciones opuestas,
-     que es la firma de un salto de progreso y no de un desplazamiento de la
-     página. Con un valor en px no queda nada que resolver.
-
-     Se mide con una sonda —el `100svh` YA resuelto— y no con innerHeight:
-     innerHeight vale lo que valga en ese instante (con la barra plegada, otra
-     cosa), y eso descuadraría el recorrido. El CSS lleva `100svh` de reserva
-     por si esto no llega a ejecutarse. */
-  const fijarRangoHero = () => {
-    const sonda = document.createElement('div');
-    sonda.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:100svh;' +
-                          'visibility:hidden;pointer-events:none';
-    document.body.appendChild(sonda);
-    const alto = sonda.offsetHeight;
-    sonda.remove();
-    if (alto > 200) {
-      document.documentElement.style.setProperty('--rango-hero', alto + 'px');
-    }
-  };
-  fijarRangoHero();
 
   let altoEstable = window.innerHeight;
 
@@ -291,7 +267,12 @@
        En táctil lo hace el navegador con animaciones ligadas al scroll (ver
        styles.css): calcularlo desde JS en iOS produce tirones, porque el
        scroll va por otro hilo y los eventos llegan tarde. */
-    if (!esTactil) {
+    /* Solo escritorio y a partir de 920px de ancho. Por debajo —móvil y
+       tablet— el hero no lleva parallax: las golondrinas entran por los lados
+       al cargar y se quedan quietas. En táctil el progreso de las animaciones
+       ligadas al scroll daba picos que no se pudieron corregir desde la página
+       (ver el comentario en css/styles.css). */
+    if (!esTactil && window.innerWidth >= 920) {
       const heroConScroll = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
@@ -307,17 +288,31 @@
     }
 
     /* — Entradas de sección — */
+    /* El disparador normal pide que el elemento suba hasta cierta altura del
+       viewport. Los últimos elementos de la página no pueden llegar ahí —el
+       documento se acaba antes— y se quedaban a opacidad 0 para siempre: la
+       dedicatoria del cierre no se veía en móvil. Cuando el punto de disparo
+       queda fuera del alcance del scroll, se revela al entrar por abajo.
+       Va en función para que se recalcule en cada refresh de ScrollTrigger,
+       que es cuando cambian las alturas al cargar las imágenes. */
+    const disparo = (nodo, altura) => () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const arriba = nodo.getBoundingClientRect().top + window.scrollY;
+      const alcanzable = arriba - window.innerHeight * (altura / 100) <= maxScroll;
+      return alcanzable ? 'top ' + altura + '%' : 'top bottom';
+    };
+
     $$('[data-anim]').forEach((nodo) => {
       gsap.fromTo(nodo, { opacity: 0, y: 26 }, {
         opacity: 1, y: 0, duration: 0.9, ease: 'power2.out',
-        scrollTrigger: { trigger: nodo, start: 'top 85%' },
+        scrollTrigger: { trigger: nodo, start: disparo(nodo, 85) },
       });
     });
 
     $$('[data-lista]').forEach((nodo) => {
       gsap.fromTo(nodo.children, { opacity: 0, y: 30 }, {
         opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', stagger: 0.09,
-        scrollTrigger: { trigger: nodo, start: 'top 88%' },
+        scrollTrigger: { trigger: nodo, start: disparo(nodo, 88) },
       });
     });
 
@@ -403,9 +398,6 @@
     if (window.innerWidth === anchoBase) return;
     anchoBase = window.innerWidth;
     altoEstable = window.innerHeight;
-    // El rango del parallax solo se rehace en un cambio real de ancho (un giro
-    // del móvil), nunca en los resizes que provoca la barra de direcciones.
-    fijarRangoHero();
 
     clearTimeout(temporizador);
     temporizador = setTimeout(() => {
