@@ -298,9 +298,17 @@ html.desbloqueado .acceso { display: none; }
   width: clamp(9.5rem, 34vw, 21rem);
   pointer-events: none;
   will-change: transform;
+}
+/* El tono cálido va en el <img>, NO en .golondrina.
+   .golondrina es el elemento que lleva la animación ligada al scroll, y un
+   filtro sobre el mismo elemento que se transforma obliga a WebKit a volver a
+   filtrar en cada fotograma, en el hilo principal. Puesto en el hijo, el
+   filtro se rasteriza una vez y el padre solo mueve la capa ya filtrada.
+   Es el mismo motivo por el que las esquinas llevan el tono horneado. */
+.golondrina__ave {
+  display: block; width: 100%; height: auto; will-change: transform;
   filter: sepia(.20) saturate(1) hue-rotate(-20deg) brightness(.9);
 }
-.golondrina__ave { display: block; width: 100%; height: auto; will-change: transform; }
 .golondrina--izq { top: 39%; left: 1.5%;  z-index: 6; width: 50vw; }
 .golondrina--der { top: 55%; right: 1.5%; z-index: 3; width: clamp(4.5rem, 14vw, 9.5rem); }
 
@@ -439,7 +447,13 @@ html.desbloqueado .acceso { display: none; }
       animation-timeline: scroll(root block);
       animation-range: 0 100svh;
       animation-duration: auto;
-      animation-timing-function: linear;
+      /* NO linear. En iOS la animación se queda congelada en el arranque y
+         luego se pone al día de golpe; con la curva retrasada, ese primer
+         tramo apenas mueve nada, así que el salto pasa de 39px a 11px y la
+         opacidad de ENARA de .68 a .91. El viaje completo se conserva: la
+         curva llega igual a 1 al final del hero. De paso el nombre se lee
+         nítido más rato y las aves arrancan acelerando, que es más de ave. */
+      animation-timing-function: cubic-bezier(.7, 0, 1, 1);
       animation-fill-mode: both;
     }
     .golondrina--izq { animation-name: hero-ave-izq; }
@@ -466,6 +480,14 @@ html.desbloqueado .acceso { display: none; }
 .ligero .hero__paisaje,   .ligero .hero__contenido {
   animation-name: none !important;
   animation-timeline: auto !important;
+}
+
+/* ?sinfiltro=1  quita SOLO el filtro de las golondrinas y la máscara del
+   paisaje, dejando las animaciones intactas. Aísla "coste de pintado" de
+   "animación mal sincronizada", que es lo que ?ligero=1 no distinguía. */
+.sinfiltro .golondrina, .sinfiltro .golondrina__ave { filter: none !important; }
+.sinfiltro .hero__paisaje {
+  -webkit-mask-image: none !important; mask-image: none !important;
 }
 
 .sinsuave, .ligero { scroll-behavior: auto !important; }

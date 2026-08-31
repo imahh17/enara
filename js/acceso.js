@@ -29,6 +29,15 @@
   const puerta = document.getElementById('acceso');
   if (!puerta) return;
 
+  // Si el <head> ya abrió la página —porque LOGIN_ACTIVO es false, o porque se
+  // recuerda la sesión—, la puerta se retira del DOM y aquí no hay nada más que
+  // hacer. Retirarla, y no solo ocultarla, evita que su formulario quede
+  // accesible al teclado o al lector de pantalla.
+  if (document.documentElement.classList.contains('desbloqueado')) {
+    puerta.remove();
+    return;
+  }
+
   function abrir(guardar) {
     if (guardar) {
       try { localStorage.setItem(LLAVE, HUELLA); } catch (e) { /* modo privado */ }
@@ -38,11 +47,6 @@
     // Las animaciones esperaban a este momento para no gastarse detrás de la puerta.
     document.dispatchEvent(new CustomEvent('enara:desbloqueado'));
   }
-
-  // ¿Ya había entrado antes en este navegador?
-  let recordado = null;
-  try { recordado = localStorage.getItem(LLAVE); } catch (e) { /* sin almacenamiento */ }
-  if (recordado === HUELLA) { abrir(false); return; }
 
   const form = puerta.querySelector('form');
   const usuario = puerta.querySelector('#acceso-usuario');
