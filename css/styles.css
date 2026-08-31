@@ -355,7 +355,7 @@ html.desbloqueado .acceso { display: none; }
    para dejarlo sobre el cielo y los montes. En vertical no hace falta: allí
    el dibujo es solo una franja al pie. */
 @media (min-aspect-ratio: 4/5) {
-  .hero__contenido { padding-bottom: clamp(3rem, 21vh, 9.5rem); }
+  .hero__contenido { padding-bottom: clamp(3rem, 21svh, 9.5rem); }
 }
 
 .hero__saludo {
@@ -445,7 +445,7 @@ html.desbloqueado .acceso { display: none; }
     .golondrina--izq, .golondrina--der,
     .hero__paisaje, .hero__contenido {
       animation-timeline: scroll(root block);
-      animation-range: 0 100svh;
+      animation-range: 0 var(--rango-hero, 100svh);
       animation-duration: auto;
       animation-timing-function: linear;
       animation-fill-mode: both;

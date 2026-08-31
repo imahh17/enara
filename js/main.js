@@ -155,6 +155,31 @@
      si cambia el ancho (rotación): NO sigue a la barra de direcciones de iOS,
      porque recalcular el H1 a mitad de scroll fuerza un layout y puede cambiar
      la altura del documento en plena inercia. */
+  /* Rango del parallax del hero, fijado en píxeles una sola vez.
+     Medido en un iPhone real, la barra de direcciones cambia el alto del
+     viewport 29 veces en un solo gesto. Mientras eso pasa el compositor va
+     resolviendo el `100svh` del animation-range, y ahí es donde el progreso da
+     un pico: el ave sube y el paisaje baja de golpe, en direcciones opuestas,
+     que es la firma de un salto de progreso y no de un desplazamiento de la
+     página. Con un valor en px no queda nada que resolver.
+
+     Se mide con una sonda —el `100svh` YA resuelto— y no con innerHeight:
+     innerHeight vale lo que valga en ese instante (con la barra plegada, otra
+     cosa), y eso descuadraría el recorrido. El CSS lleva `100svh` de reserva
+     por si esto no llega a ejecutarse. */
+  const fijarRangoHero = () => {
+    const sonda = document.createElement('div');
+    sonda.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:100svh;' +
+                          'visibility:hidden;pointer-events:none';
+    document.body.appendChild(sonda);
+    const alto = sonda.offsetHeight;
+    sonda.remove();
+    if (alto > 200) {
+      document.documentElement.style.setProperty('--rango-hero', alto + 'px');
+    }
+  };
+  fijarRangoHero();
+
   let altoEstable = window.innerHeight;
 
   /**
@@ -378,6 +403,9 @@
     if (window.innerWidth === anchoBase) return;
     anchoBase = window.innerWidth;
     altoEstable = window.innerHeight;
+    // El rango del parallax solo se rehace en un cambio real de ancho (un giro
+    // del móvil), nunca en los resizes que provoca la barra de direcciones.
+    fijarRangoHero();
 
     clearTimeout(temporizador);
     temporizador = setTimeout(() => {

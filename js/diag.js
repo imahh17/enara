@@ -40,7 +40,7 @@
 
   let yAnt, aveAnt, ihAnt, congelado = false, tras = 0;
   let traza = [], cambiosIh = [], saltos = [];
-  let picoSinc = 0, picoDAve = 0, heroCambio = '', svhCambio = '';
+  let picoSinc = 0, picoDAve = 0, heroCambio = '', svhCambio = '', ciego = false;
   let soltado = false, cuadros = 0, fps = 0, t0 = performance.now();
   const ih0 = window.innerHeight, hero0 = hero.offsetHeight, svh0 = sonda.offsetHeight;
 
@@ -115,6 +115,10 @@
     const dt = performance.now() - t0;
     if (dt > 500) { fps = Math.round(cuadros * 1000 / dt); cuadros = 0; t0 += dt; }
 
+    // Si el progreso avanza pero ningún fotograma registra desplazamiento, el
+    // hilo principal no está viendo el scroll y esta traza no vale para nada.
+    if (traza.length > 12 && traza.every((f) => f.d === 0) && p > 0.02) ciego = true;
+
     const s = saltos[0];
     panel.textContent =
       'scroll ' + Math.round(y) + '   progreso ' + p.toFixed(3) + '   fps ' + fps + '\n' +
@@ -130,7 +134,11 @@
           '  la barra cambió ese frame: ' + (s.ih ? 'SÍ' : 'no') +
             '   tras soltar: ' + (s.soltado ? 'SÍ' : 'no') + '\n' +
           'CONGELADO · toca el panel para reiniciar'
-        : 'sin saltos aún · sigue haciendo scroll');
+        : (ciego
+          ? '⚠ Δscroll = 0 en todos los fotogramas mientras el progreso\n' +
+            '  cambia: el hilo principal NO ve este scroll (scroll\n' +
+            '  asíncrono de iOS). Desde aquí el salto es invisible.'
+          : 'sin saltos aún · sigue haciendo scroll'));
 
     requestAnimationFrame(medir);
   }
