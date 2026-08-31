@@ -8,7 +8,7 @@
  */
 const AMANECER = 7 * 60 + 32;     // 07:32
 const OCASO    = 20 * 60 + 52;    // 20:52
-const NACE     = 8 * 60 + 30;     // 08:30
+const NACE     = 8 * 60 + 3;      // 08:03
 const LUZ      = OCASO - AMANECER;
 
 const CX = 290, CY = 190, RX = 225, RY = 150;
@@ -52,7 +52,7 @@ const rayos = Array.from({ length: 8 }, (_, i) => {
 }).join('\n          ');
 
 console.log(`      <svg class="arco" viewBox="0 0 580 236" role="img"
-           aria-label="Diagrama del recorrido del sol el 29 de agosto de 2026 en Bilbao. El sol sale a las 07:32, se pone a las 20:52, y la posición de las 08:30 queda muy cerca del amanecer, a 9,6 grados sobre el horizonte.">
+           aria-label="Diagrama del recorrido del sol el 29 de agosto de 2026 en Bilbao. El sol sale a las 07:32, se pone a las 20:52, y la posición de las 08:03 queda pegada al amanecer, a 4,8 grados sobre el horizonte.">
         <defs>
           <linearGradient id="luzDelDia" x1="0" y1="1" x2="0" y2="0">
             <stop offset="0" stop-color="var(--coral)" stop-opacity=".55"/>
@@ -80,7 +80,7 @@ console.log(`      <svg class="arco" viewBox="0 0 580 236" role="img"
         <g class="arco__guia">
           <path d="M ${f(sx + 16)} ${f(sy - 10)} L 150 96 L 196 96"/>
         </g>
-        <text class="arco__hito"  x="204" y="103">08:30</text>
+        <text class="arco__hito"  x="204" y="103">08:03</text>
 
         <text class="arco__borde" x="${f(ix)}" y="${CY + 26}" text-anchor="middle">07:32</text>
         <text class="arco__pie"   x="${f(ix)}" y="${CY + 44}" text-anchor="middle">amanecer</text>

@@ -41,7 +41,11 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html { -webkit-text-size-adjust: 100%; }
+/* Solo con puntero fino: en táctil, `smooth` convierte cualquier scroll
+   programático en una animación del motor, que desbanca a la inercia del
+   sistema. Su único uso real aquí es el enlace de "saltar al contenido". */
+@media (hover: hover) and (pointer: fine) { html { scroll-behavior: smooth; } }
 
 body {
   margin: 0;
@@ -181,6 +185,12 @@ html.desbloqueado .acceso { display: none; }
 /* ══════════════════ HERO ══════════════════ */
 
 .hero {
+  /* El único hijo en flujo del hero es .hero__contenido, así que es forzosamente
+     el ancla que elige WebKit… y es justo lo que desplaza la animación ligada al
+     scroll. El reajuste del anclaje sale como una escritura de posición que
+     también cancela la inercia. Aquí no aporta nada: se desactiva. */
+  overflow-anchor: none;
+
   /* Cuánto se separa el marco del borde de la pantalla. */
   --marco: clamp(0.85rem, 3vw, 2.6rem);
 
@@ -439,16 +449,35 @@ html.desbloqueado .acceso { display: none; }
   }
 }
 
-/* Modo diagnóstico. Añadiendo ?ligero=1 a la URL se desactivan los efectos
-   que más cuesta pintar en el hero. Sirve para aislar en un móvil real si un
-   scroll con tirones viene del coste de pintado o de otra cosa. */
+/* ── Modos de diagnóstico ──────────────────────────────────────────────────
+   Se activan por parámetro en la URL y sirven para aislar en un móvil real de
+   dónde viene un scroll con tirones. Son independientes entre sí.
+
+   ?sinparallax=1  quita SOLO las animaciones ligadas al scroll del hero.
+   ?sinsuave=1     quita scroll-behavior: smooth.
+   ?ligero=1       lo quita todo: pintado caro Y animaciones.
+
+   (El ?ligero=1 anterior tenía un fallo: no desactivaba animation-name ni
+   animation-timeline, justo lo único exclusivo del hero. Ya lo hace.) */
+
+.sinparallax .golondrina--izq, .sinparallax .golondrina--der,
+.sinparallax .hero__paisaje,   .sinparallax .hero__contenido,
+.ligero .golondrina--izq, .ligero .golondrina--der,
+.ligero .hero__paisaje,   .ligero .hero__contenido {
+  animation-name: none !important;
+  animation-timeline: auto !important;
+}
+
+.sinsuave, .ligero { scroll-behavior: auto !important; }
+.sinancla, .sinancla body, .sinancla .hero { overflow-anchor: none !important; }
+
 .ligero .hero__grano { display: none; }
 .ligero .hero__paisaje { -webkit-mask-image: none; mask-image: none; }
 .ligero .golondrina, .ligero .golondrina__ave { filter: none; }
 .ligero .hero__lamina::after { display: none; }
 .ligero .esquina { display: none; }
 .ligero .golondrina, .ligero .golondrina__ave,
-.ligero .hero__paisaje { will-change: auto; }
+.ligero .hero__paisaje, .ligero .hero__nombre .l { will-change: auto; }
 
 /* ══════════════════ SECCIONES ══════════════════ */
 

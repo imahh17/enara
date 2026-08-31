@@ -8,7 +8,7 @@ const DATA = {
     nombre: 'Enara',
     fecha: '29 de agosto de 2026',
     fechaCorta: '29 · 08 · 2026',
-    hora: '08:30',
+    hora: '08:03',
     lugar: 'Hospital de Basurto',
     ciudad: 'Bilbao',
     diaSemana: 'sábado',
@@ -21,7 +21,7 @@ const DATA = {
     amanecer: '07:32',
     ocaso: '20:52',
     horasDeLuz: '13 h 20 min',
-    minutosTrasElAmanecer: 58,
+    minutosTrasElAmanecer: 30,
     tempAlNacer: 18.3,
     tempMaxima: 28.7,
     tempMinima: 18.3,
@@ -29,7 +29,7 @@ const DATA = {
     humedad: 75,
     lluvia: 0,
     viento: 15.3,
-    alturaDelSol: 9.6,
+    alturaDelSol: 4.8,
     resumen: 'Cielo despejado',
   },
 
@@ -161,29 +161,29 @@ const DATA = {
 // Calculada con astronomy-engine. Ver tools/natal-chart.cjs y README.md.
 DATA.carta = {
   "meta": {
-    "fechaLocal": "2026-08-29T08:30:00+02:00",
-    "fechaUTC": "2026-08-29T06:30:00.000Z",
+    "fechaLocal": "2026-08-29T08:03:00+02:00",
+    "fechaUTC": "2026-08-29T06:03:00.000Z",
     "lugar": "Hospital de Basurto, Bilbao",
     "latitud": 43.2634,
     "longitud": -2.9515,
     "sistemaCasas": "Signos enteros (whole sign)",
     "zodiaco": "Tropical, eclíptica de la fecha",
     "oblicuidad": 23.43582,
-    "tiempoSideralLocal": 72.0341
+    "tiempoSideralLocal": 65.2656
   },
   "ascendente": {
-    "lon": 166.1074,
+    "lon": 160.8903,
     "signo": "Virgo",
     "signoIndex": 5,
-    "grado": 16,
-    "minuto": 6
+    "grado": 10,
+    "minuto": 53
   },
   "medioCielo": {
-    "lon": 73.4316,
+    "lon": 67.0875,
     "signo": "Géminis",
     "signoIndex": 2,
-    "grado": 13,
-    "minuto": 26
+    "grado": 7,
+    "minuto": 5
   },
   "nodoNorte": {
     "lon": 329.8395,
@@ -195,47 +195,47 @@ DATA.carta = {
   "planetas": [
     {
       "nombre": "Sol",
-      "lon": 155.9554,
+      "lon": 155.9373,
       "signo": "Virgo",
       "signoIndex": 5,
       "grado": 5,
-      "minuto": 57,
+      "minuto": 56,
       "retrogrado": false,
       "casa": 1
     },
     {
       "nombre": "Luna",
-      "lon": 348.983,
+      "lon": 348.7386,
       "signo": "Piscis",
       "signoIndex": 11,
       "grado": 18,
-      "minuto": 59,
+      "minuto": 44,
       "retrogrado": false,
       "casa": 7
     },
     {
       "nombre": "Mercurio",
-      "lon": 157.4886,
+      "lon": 157.4523,
       "signo": "Virgo",
       "signoIndex": 5,
       "grado": 7,
-      "minuto": 29,
+      "minuto": 27,
       "retrogrado": false,
       "casa": 1
     },
     {
       "nombre": "Venus",
-      "lon": 200.9463,
+      "lon": 200.9307,
       "signo": "Libra",
       "signoIndex": 6,
       "grado": 20,
-      "minuto": 57,
+      "minuto": 56,
       "retrogrado": false,
       "casa": 2
     },
     {
       "nombre": "Marte",
-      "lon": 101.6571,
+      "lon": 101.6451,
       "signo": "Cáncer",
       "signoIndex": 3,
       "grado": 11,
@@ -245,7 +245,7 @@ DATA.carta = {
     },
     {
       "nombre": "Júpiter",
-      "lon": 133.1235,
+      "lon": 133.1195,
       "signo": "Leo",
       "signoIndex": 4,
       "grado": 13,
@@ -255,7 +255,7 @@ DATA.carta = {
     },
     {
       "nombre": "Saturno",
-      "lon": 13.8268,
+      "lon": 13.8278,
       "signo": "Aries",
       "signoIndex": 0,
       "grado": 13,
@@ -265,7 +265,7 @@ DATA.carta = {
     },
     {
       "nombre": "Urano",
-      "lon": 65.6298,
+      "lon": 65.6296,
       "signo": "Géminis",
       "signoIndex": 2,
       "grado": 5,
@@ -275,7 +275,7 @@ DATA.carta = {
     },
     {
       "nombre": "Neptuno",
-      "lon": 3.7351,
+      "lon": 3.7356,
       "signo": "Aries",
       "signoIndex": 0,
       "grado": 3,
@@ -285,7 +285,7 @@ DATA.carta = {
     },
     {
       "nombre": "Plutón",
-      "lon": 303.5622,
+      "lon": 303.5626,
       "signo": "Acuario",
       "signoIndex": 10,
       "grado": 3,
@@ -361,79 +361,79 @@ DATA.carta = {
       "a": "Sol",
       "b": "Mercurio",
       "tipo": "Conjunción",
-      "orbe": 1.53
+      "orbe": 1.52
     },
     {
       "a": "Sol",
       "b": "Urano",
       "tipo": "Cuadratura",
-      "orbe": 0.33
+      "orbe": 0.31
+    },
+    {
+      "a": "Sol",
+      "b": "Ascendente",
+      "tipo": "Conjunción",
+      "orbe": 4.95
+    },
+    {
+      "a": "Sol",
+      "b": "Medio Cielo",
+      "tipo": "Cuadratura",
+      "orbe": 1.15
     },
     {
       "a": "Luna",
       "b": "Ascendente",
       "tipo": "Oposición",
-      "orbe": 2.88
-    },
-    {
-      "a": "Luna",
-      "b": "Medio Cielo",
-      "tipo": "Cuadratura",
-      "orbe": 5.55
+      "orbe": 7.85
     },
     {
       "a": "Mercurio",
       "b": "Marte",
       "tipo": "Sextil",
-      "orbe": 4.17
+      "orbe": 4.19
     },
     {
       "a": "Mercurio",
       "b": "Urano",
       "tipo": "Cuadratura",
-      "orbe": 1.86
+      "orbe": 1.82
+    },
+    {
+      "a": "Mercurio",
+      "b": "Ascendente",
+      "tipo": "Conjunción",
+      "orbe": 3.44
     },
     {
       "a": "Mercurio",
       "b": "Medio Cielo",
       "tipo": "Cuadratura",
-      "orbe": 5.94
+      "orbe": 0.36
     },
     {
       "a": "Venus",
       "b": "Saturno",
       "tipo": "Oposición",
-      "orbe": 7.12
+      "orbe": 7.1
     },
     {
       "a": "Marte",
       "b": "Saturno",
       "tipo": "Cuadratura",
-      "orbe": 2.17
+      "orbe": 2.18
     },
     {
       "a": "Marte",
       "b": "Ascendente",
       "tipo": "Sextil",
-      "orbe": 4.45
+      "orbe": 0.75
     },
     {
       "a": "Júpiter",
       "b": "Saturno",
       "tipo": "Trígono",
-      "orbe": 0.7
-    },
-    {
-      "a": "Júpiter",
-      "b": "Medio Cielo",
-      "tipo": "Sextil",
-      "orbe": 0.31
-    },
-    {
-      "a": "Saturno",
-      "b": "Medio Cielo",
-      "tipo": "Sextil",
-      "orbe": 0.4
+      "orbe": 0.71
     },
     {
       "a": "Urano",
@@ -449,9 +449,15 @@ DATA.carta = {
     },
     {
       "a": "Urano",
+      "b": "Ascendente",
+      "tipo": "Cuadratura",
+      "orbe": 5.26
+    },
+    {
+      "a": "Urano",
       "b": "Medio Cielo",
       "tipo": "Conjunción",
-      "orbe": 7.8
+      "orbe": 1.46
     },
     {
       "a": "Neptuno",
@@ -460,10 +466,22 @@ DATA.carta = {
       "orbe": 0.17
     },
     {
+      "a": "Neptuno",
+      "b": "Medio Cielo",
+      "tipo": "Sextil",
+      "orbe": 3.35
+    },
+    {
+      "a": "Plutón",
+      "b": "Medio Cielo",
+      "tipo": "Trígono",
+      "orbe": 3.52
+    },
+    {
       "a": "Ascendente",
       "b": "Medio Cielo",
       "tipo": "Cuadratura",
-      "orbe": 2.68
+      "orbe": 3.8
     }
   ]
 };
@@ -495,19 +513,19 @@ DATA.astro = {
     {
       clave: 'Luna', titulo: 'Tu Luna en Piscis',
       texto: 'La Luna es lo que sientes antes de pensarlo. En Piscis es porosa: absorbe el estado de ánimo ' +
-             'de la habitación entera. La víspera de tu nacimiento hubo luna llena, y esa Luna se quedó ' +
-             'justo enfrente de tu Ascendente. Nada en tu carta está tan marcado.',
+             'de la habitación entera. La víspera de tu nacimiento hubo luna llena, y esa Luna seguía ' +
+             'enfrente de tu Ascendente cuando llegaste: el eje Virgo–Piscis atraviesa tu carta de lado a lado.',
     },
     {
       clave: 'Ascendente', titulo: 'Tu Ascendente en Virgo',
-      texto: 'El Ascendente es el grado exacto del cielo que asomaba por el horizonte de Bilbao a las 08:30. ' +
+      texto: 'El Ascendente es el grado exacto del cielo que asomaba por el horizonte de Bilbao a las 08:03. ' +
              'Es la puerta por la que el mundo te ve entrar. En tu caso está en el mismo signo que tu Sol, ' +
              'y eso es raro y bonito: por fuera te pareces mucho a lo que eres por dentro.',
     },
   ],
   notas: [
-    'El Sol y Mercurio salieron juntos por el horizonte contigo: los dos en Virgo, los dos en la casa 1.',
-    'Naciste con el Sol a solo 9,6° sobre el horizonte. Acababa de amanecer.',
+    'El Sol y Mercurio estaban saliendo por tu Ascendente cuando naciste: los dos en Virgo, los dos en conjunción con él y los dos en la casa 1.',
+    'Naciste con el Sol a solo 4,8° sobre el horizonte: acababa de salir.',
     'Júpiter en trígono con Saturno, con un orbe de menos de un grado: expansión y estructura de acuerdo.',
   ],
 };

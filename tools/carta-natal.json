@@ -1,28 +1,28 @@
 {
   "meta": {
-    "fechaLocal": "2026-08-29T08:30:00+02:00",
-    "fechaUTC": "2026-08-29T06:30:00.000Z",
+    "fechaLocal": "2026-08-29T08:03:00+02:00",
+    "fechaUTC": "2026-08-29T06:03:00.000Z",
     "lugar": "Hospital de Basurto, Bilbao",
     "latitud": 43.2634,
     "longitud": -2.9515,
     "sistemaCasas": "Signos enteros (whole sign)",
     "zodiaco": "Tropical, eclíptica de la fecha",
     "oblicuidad": 23.43582,
-    "tiempoSideralLocal": 72.0341
+    "tiempoSideralLocal": 65.2656
   },
   "ascendente": {
-    "lon": 166.1074,
+    "lon": 160.8903,
     "signo": "Virgo",
     "signoIndex": 5,
-    "grado": 16,
-    "minuto": 6
+    "grado": 10,
+    "minuto": 53
   },
   "medioCielo": {
-    "lon": 73.4316,
+    "lon": 67.0875,
     "signo": "Géminis",
     "signoIndex": 2,
-    "grado": 13,
-    "minuto": 26
+    "grado": 7,
+    "minuto": 5
   },
   "nodoNorte": {
     "lon": 329.8395,
@@ -34,47 +34,47 @@
   "planetas": [
     {
       "nombre": "Sol",
-      "lon": 155.9554,
+      "lon": 155.9373,
       "signo": "Virgo",
       "signoIndex": 5,
       "grado": 5,
-      "minuto": 57,
+      "minuto": 56,
       "retrogrado": false,
       "casa": 1
     },
     {
       "nombre": "Luna",
-      "lon": 348.983,
+      "lon": 348.7386,
       "signo": "Piscis",
       "signoIndex": 11,
       "grado": 18,
-      "minuto": 59,
+      "minuto": 44,
       "retrogrado": false,
       "casa": 7
     },
     {
       "nombre": "Mercurio",
-      "lon": 157.4886,
+      "lon": 157.4523,
       "signo": "Virgo",
       "signoIndex": 5,
       "grado": 7,
-      "minuto": 29,
+      "minuto": 27,
       "retrogrado": false,
       "casa": 1
     },
     {
       "nombre": "Venus",
-      "lon": 200.9463,
+      "lon": 200.9307,
       "signo": "Libra",
       "signoIndex": 6,
       "grado": 20,
-      "minuto": 57,
+      "minuto": 56,
       "retrogrado": false,
       "casa": 2
     },
     {
       "nombre": "Marte",
-      "lon": 101.6571,
+      "lon": 101.6451,
       "signo": "Cáncer",
       "signoIndex": 3,
       "grado": 11,
@@ -84,7 +84,7 @@
     },
     {
       "nombre": "Júpiter",
-      "lon": 133.1235,
+      "lon": 133.1195,
       "signo": "Leo",
       "signoIndex": 4,
       "grado": 13,
@@ -94,7 +94,7 @@
     },
     {
       "nombre": "Saturno",
-      "lon": 13.8268,
+      "lon": 13.8278,
       "signo": "Aries",
       "signoIndex": 0,
       "grado": 13,
@@ -104,7 +104,7 @@
     },
     {
       "nombre": "Urano",
-      "lon": 65.6298,
+      "lon": 65.6296,
       "signo": "Géminis",
       "signoIndex": 2,
       "grado": 5,
@@ -114,7 +114,7 @@
     },
     {
       "nombre": "Neptuno",
-      "lon": 3.7351,
+      "lon": 3.7356,
       "signo": "Aries",
       "signoIndex": 0,
       "grado": 3,
@@ -124,7 +124,7 @@
     },
     {
       "nombre": "Plutón",
-      "lon": 303.5622,
+      "lon": 303.5626,
       "signo": "Acuario",
       "signoIndex": 10,
       "grado": 3,
@@ -200,79 +200,79 @@
       "a": "Sol",
       "b": "Mercurio",
       "tipo": "Conjunción",
-      "orbe": 1.53
+      "orbe": 1.52
     },
     {
       "a": "Sol",
       "b": "Urano",
       "tipo": "Cuadratura",
-      "orbe": 0.33
+      "orbe": 0.31
+    },
+    {
+      "a": "Sol",
+      "b": "Ascendente",
+      "tipo": "Conjunción",
+      "orbe": 4.95
+    },
+    {
+      "a": "Sol",
+      "b": "Medio Cielo",
+      "tipo": "Cuadratura",
+      "orbe": 1.15
     },
     {
       "a": "Luna",
       "b": "Ascendente",
       "tipo": "Oposición",
-      "orbe": 2.88
-    },
-    {
-      "a": "Luna",
-      "b": "Medio Cielo",
-      "tipo": "Cuadratura",
-      "orbe": 5.55
+      "orbe": 7.85
     },
     {
       "a": "Mercurio",
       "b": "Marte",
       "tipo": "Sextil",
-      "orbe": 4.17
+      "orbe": 4.19
     },
     {
       "a": "Mercurio",
       "b": "Urano",
       "tipo": "Cuadratura",
-      "orbe": 1.86
+      "orbe": 1.82
+    },
+    {
+      "a": "Mercurio",
+      "b": "Ascendente",
+      "tipo": "Conjunción",
+      "orbe": 3.44
     },
     {
       "a": "Mercurio",
       "b": "Medio Cielo",
       "tipo": "Cuadratura",
-      "orbe": 5.94
+      "orbe": 0.36
     },
     {
       "a": "Venus",
       "b": "Saturno",
       "tipo": "Oposición",
-      "orbe": 7.12
+      "orbe": 7.1
     },
     {
       "a": "Marte",
       "b": "Saturno",
       "tipo": "Cuadratura",
-      "orbe": 2.17
+      "orbe": 2.18
     },
     {
       "a": "Marte",
       "b": "Ascendente",
       "tipo": "Sextil",
-      "orbe": 4.45
+      "orbe": 0.75
     },
     {
       "a": "Júpiter",
       "b": "Saturno",
       "tipo": "Trígono",
-      "orbe": 0.7
-    },
-    {
-      "a": "Júpiter",
-      "b": "Medio Cielo",
-      "tipo": "Sextil",
-      "orbe": 0.31
-    },
-    {
-      "a": "Saturno",
-      "b": "Medio Cielo",
-      "tipo": "Sextil",
-      "orbe": 0.4
+      "orbe": 0.71
     },
     {
       "a": "Urano",
@@ -288,9 +288,15 @@
     },
     {
       "a": "Urano",
+      "b": "Ascendente",
+      "tipo": "Cuadratura",
+      "orbe": 5.26
+    },
+    {
+      "a": "Urano",
       "b": "Medio Cielo",
       "tipo": "Conjunción",
-      "orbe": 7.8
+      "orbe": 1.46
     },
     {
       "a": "Neptuno",
@@ -299,10 +305,22 @@
       "orbe": 0.17
     },
     {
+      "a": "Neptuno",
+      "b": "Medio Cielo",
+      "tipo": "Sextil",
+      "orbe": 3.35
+    },
+    {
+      "a": "Plutón",
+      "b": "Medio Cielo",
+      "tipo": "Trígono",
+      "orbe": 3.52
+    },
+    {
       "a": "Ascendente",
       "b": "Medio Cielo",
       "tipo": "Cuadratura",
-      "orbe": 2.68
+      "orbe": 3.8
     }
   ]
 }

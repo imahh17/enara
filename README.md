@@ -1,6 +1,6 @@
 # Enara
 
-Una página-recuerdo del día que nació Enara: el 29 de agosto de 2026, a las 08:30 de la
+Una página-recuerdo del día que nació Enara: el 29 de agosto de 2026, a las 08:03 de la
 mañana, en el Hospital de Basurto de Bilbao.
 
 Cuenta cómo era el mundo aquel día. Qué significa su nombre —*enara* es golondrina en

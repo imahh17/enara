@@ -9,6 +9,20 @@
   'use strict';
 
   const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /**
+   * Refresca ScrollTrigger SIEMPRE por la ruta segura.
+   *
+   * `ScrollTrigger.refresh()` sin argumento entra por `_refreshAll(force=true)`,
+   * que se salta la guarda de "se está scrolleando" y hace dos escrituras de
+   * posición: graba el scroll, lo pone a 0 y lo restaura. En iOS cada escritura
+   * es un setContentOffset: que CANCELA la deceleración — la inercia se moría
+   * en seco. Con el argumento `true` entra por la ruta de resize, que respeta
+   * esa guarda y aplaza el refresco a que el scroll termine.
+   */
+  const refrescarScrollTrigger = () => {
+    if (window.gsap && window.ScrollTrigger) ScrollTrigger.refresh(true);
+  };
   const hayGsap = typeof window.gsap !== 'undefined';
   const $  = (sel, ctx) => (ctx || document).querySelector(sel);
   const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
@@ -137,6 +151,12 @@
     });
   }
 
+  /* Alto de referencia para escalar el nombre. Se fija al cargar y solo cambia
+     si cambia el ancho (rotación): NO sigue a la barra de direcciones de iOS,
+     porque recalcular el H1 a mitad de scroll fuerza un layout y puede cambiar
+     la altura del documento en plena inercia. */
+  let altoEstable = window.innerHeight;
+
   /**
    * Escala ENARA para que ocupe justo el ancho disponible, en cualquier pantalla.
    * Se mide con un Range porque el texto no desborda su caja en escritorio y
@@ -150,6 +170,10 @@
     const disponible = caja.clientWidth
       - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
 
+    // Si la caja aún no tiene ancho utilizable, no se toca nada: medir aquí
+    // dejaría un tamaño absurdo clavado.
+    if (!(disponible > 40)) return;
+
     const BASE = 200;
     nodo.style.fontSize = BASE + 'px';
     const rango = document.createRange();
@@ -160,8 +184,11 @@
     // El nombre lo limita el ancho, pero también la altura: en pantallas
     // anchas y bajas, si solo mandara el ancho, ENARA se comería el hero.
     const porAncho  = BASE * (disponible * 0.98) / ancho;
-    const porAlto   = window.innerHeight * 0.32;
+    const porAlto   = altoEstable * 0.32;
     const tamano = Math.min(porAncho, porAlto, 272);
+    // Nunca aplicar algo inválido: si el cálculo sale raro, se deja que mande
+    // el clamp() del CSS en vez de dejar el nombre invisible.
+    if (!isFinite(tamano) || tamano < 24) { nodo.style.fontSize = ''; return; }
     nodo.style.fontSize = tamano + 'px';
 
     // Red de seguridad: si al aplicarlo sigue saliéndose —pasa cuando se midió
@@ -342,28 +369,40 @@
 
   let temporizador;
   let eraMovil = enMovil();
+  let anchoBase = window.innerWidth;
+
   window.addEventListener('resize', () => {
+    // En iOS, plegar la barra de direcciones dispara `resize` sin que cambie el
+    // ancho. Eso pasa justo al empezar a bajar desde arriba —o sea, recorriendo
+    // el hero— y era el origen del frenazo: no hay nada que remedir ahí.
+    if (window.innerWidth === anchoBase) return;
+    anchoBase = window.innerWidth;
+    altoEstable = window.innerHeight;
+
     clearTimeout(temporizador);
     temporizador = setTimeout(() => {
       ajustarNombre();
       // Solo se resiembra al cruzar el corte; si no, el cielo cambiaría en
       // cada arrastre del ratón.
       if (enMovil() !== eraMovil) { eraMovil = enMovil(); sembrarEstrellas(); }
-      if (hayGsap && window.ScrollTrigger) ScrollTrigger.refresh();
+      refrescarScrollTrigger();
     }, 150);
-  });
+  }, { passive: true });
 
   // Las fuentes web cambian el ancho del texto: hay que remedir cuando cargan.
   // fonts.ready puede resolverse antes de que Inter esté realmente disponible
   // (se ha visto en Safari), así que además se pide la fuente explícitamente y
   // se remide al terminar la carga de la página.
+  // Si el usuario ya está scrolleando, remedir el nombre no aporta nada y sí
+  // fuerza un layout en mal momento.
+  const remedir = () => { if (window.scrollY > 4) return; ajustarNombre(); };
   if (document.fonts) {
-    if (document.fonts.ready) document.fonts.ready.then(ajustarNombre);
+    if (document.fonts.ready) document.fonts.ready.then(remedir);
     if (document.fonts.load) {
-      document.fonts.load('900 200px Inter').then(ajustarNombre).catch(() => {});
+      document.fonts.load('900 200px Inter').then(remedir).catch(() => {});
     }
   }
-  window.addEventListener('load', ajustarNombre);
+  window.addEventListener('load', remedir);
 
   // Las animaciones no arrancan hasta que se pasa la puerta de acceso: si no,
   // la entrada del hero se gastaría por detrás y no se vería.
@@ -373,7 +412,7 @@
   // sin ellas: mientras estaba tapada, la fuente podía no haber cargado aún.
   document.addEventListener('enara:desbloqueado', () => {
     ajustarNombre();
-    if (hayGsap && window.ScrollTrigger) ScrollTrigger.refresh();
+    refrescarScrollTrigger();
   });
 
   if (hayGsap && !quieto) {

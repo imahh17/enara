@@ -1,5 +1,5 @@
       <svg class="arco" viewBox="0 0 580 236" role="img"
-           aria-label="Diagrama del recorrido del sol el 29 de agosto de 2026 en Bilbao. El sol sale a las 07:32, se pone a las 20:52, y la posición de las 08:30 queda muy cerca del amanecer, a 9,6 grados sobre el horizonte.">
+           aria-label="Diagrama del recorrido del sol el 29 de agosto de 2026 en Bilbao. El sol sale a las 07:32, se pone a las 20:52, y la posición de las 08:03 queda pegada al amanecer, a 4,8 grados sobre el horizonte.">
         <defs>
           <linearGradient id="luzDelDia" x1="0" y1="1" x2="0" y2="0">
             <stop offset="0" stop-color="var(--coral)" stop-opacity=".55"/>
@@ -8,7 +8,7 @@
         </defs>
 
         <!-- lo que llevaba de día cuando nació: una cuña mínima -->
-        <path class="arco__cuna" d="M 65 190 A 225 150 0 0 1 70.8 156.1 L 70.8 190 L 65 190 Z"/>
+        <path class="arco__cuna" d="M 65 190 A 225 150 0 0 1 66.7 171.8 L 66.7 190 L 65 190 Z"/>
 
         <line class="arco__horizonte" x1="34" y1="190" x2="546" y2="190"/>
         <path  class="arco__resto" d="M 65 190 A 225 150 0 0 1 515 190"/>
@@ -27,26 +27,26 @@
           <line x1="504" y1="143.6" x2="512.1" y2="139.7"/>
           <line x1="514.3" y1="178.2" x2="519.8" y2="177.6"/>
         </g>
-        <path  class="arco__andado" d="M 65 190 A 225 150 0 0 1 70.8 156.1"/>
+        <path  class="arco__andado" d="M 65 190 A 225 150 0 0 1 66.7 171.8"/>
 
-        <line class="arco__plomada" x1="70.8" y1="156.1" x2="70.8" y2="190"/>
+        <line class="arco__plomada" x1="66.7" y1="171.8" x2="66.7" y2="190"/>
 
         <g class="arco__sol">
-          <line x1="84.6" y1="158.8" x2="91.4" y2="160.1"/>
-          <line x1="78.6" y1="167.7" x2="82.6" y2="173.5"/>
-          <line x1="68.1" y1="169.9" x2="66.8" y2="176.7"/>
-          <line x1="59.2" y1="164" x2="53.4" y2="167.9"/>
-          <line x1="57.1" y1="153.5" x2="50.2" y2="152.1"/>
-          <line x1="63" y1="144.5" x2="59.1" y2="138.7"/>
-          <line x1="73.5" y1="142.4" x2="74.8" y2="135.5"/>
-          <line x1="82.4" y1="148.3" x2="88.2" y2="144.4"/>
-          <circle cx="70.8" cy="156.1" r="10.5"/>
+          <line x1="80.4" y1="174.5" x2="87.3" y2="175.8"/>
+          <line x1="74.5" y1="183.4" x2="78.4" y2="189.2"/>
+          <line x1="64" y1="185.5" x2="62.7" y2="192.4"/>
+          <line x1="55.1" y1="179.6" x2="49.3" y2="183.5"/>
+          <line x1="52.9" y1="169.1" x2="46.1" y2="167.8"/>
+          <line x1="58.8" y1="160.2" x2="54.9" y2="154.4"/>
+          <line x1="69.3" y1="158" x2="70.7" y2="151.2"/>
+          <line x1="78.3" y1="164" x2="84.1" y2="160"/>
+          <circle cx="66.7" cy="171.8" r="10.5"/>
         </g>
 
         <g class="arco__guia">
-          <path d="M 86.8 146.1 L 150 96 L 196 96"/>
+          <path d="M 82.7 161.8 L 150 96 L 196 96"/>
         </g>
-        <text class="arco__hito"  x="204" y="103">08:30</text>
+        <text class="arco__hito"  x="204" y="103">08:03</text>
 
         <text class="arco__borde" x="65" y="216" text-anchor="middle">07:32</text>
         <text class="arco__pie"   x="65" y="234" text-anchor="middle">amanecer</text>

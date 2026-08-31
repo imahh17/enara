@@ -1,13 +1,13 @@
 /**
  * Calcula la carta natal de Enara y la vuelca como JSON.
- * Nacimiento: 29/08/2026 08:30 CEST (06:30 UTC), Hospital de Basurto, Bilbao.
+ * Nacimiento: 29/08/2026 08:03 CEST (06:03 UTC), Hospital de Basurto, Bilbao.
  *
  * Script de un solo uso: su salida se pega en js/data.js. No se sirve en la web.
  *   node tools/natal-chart.cjs
  */
 const Astronomy = require('astronomy-engine');
 
-const BIRTH_UTC = new Date(Date.UTC(2026, 7, 29, 6, 30, 0));
+const BIRTH_UTC = new Date(Date.UTC(2026, 7, 29, 6, 3, 0));
 const LAT = 43.2634;   // Hospital de Basurto, Bilbao
 const LON = -2.9515;
 
@@ -114,7 +114,7 @@ for (let i = 0; i < puntos.length; i++) {
 
 const carta = {
   meta: {
-    fechaLocal: '2026-08-29T08:30:00+02:00',
+    fechaLocal: '2026-08-29T08:03:00+02:00',
     fechaUTC: BIRTH_UTC.toISOString(),
     lugar: 'Hospital de Basurto, Bilbao',
     latitud: LAT, longitud: LON,
