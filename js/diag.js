@@ -1,25 +1,24 @@
 /**
  * Modo diagnóstico del hero (?diag=1). No se carga nunca en uso normal.
  *
- * Mide, en cada fotograma, dónde ESTÁ cada elemento animado del hero frente a
- * dónde LE TOCARÍA estar según el scroll, y se queda con los picos. Así un
- * único pantallazo, tomado después de un flick natural, dice si el salto es:
+ * La primera versión medía si la animación iba desfasada respecto al scroll.
+ * Las medidas en un iPhone real dijeron que no: Δ 0.0 siempre, incluso en el
+ * fotograma del salto. Si la animación sigue al scroll sin desfase y aun así
+ * salta, lo que salta es EL SCROLL. Esta versión traza eso.
  *
- *   · un retraso de la animación que luego se pone al día  → Δ grande
- *   · un cambio de altura del hero (relayout)              → "hero" cambia
- *   · la barra de direcciones moviendo el viewport         → "ih" cambia
- *   · la animación que ni siquiera está enganchada         → "anims 0"
+ * Registra el desplazamiento de scroll de cada fotograma y se CONGELA sola en
+ * cuanto encuentra una discontinuidad: un cambio de signo brusco o un salto
+ * mucho mayor que los fotogramas vecinos. Congelada se puede fotografiar con
+ * calma. Tocando el panel se reinicia.
  */
 (function () {
   'use strict';
 
-  const ave = document.querySelector('.golondrina--der');
-  const txt = document.querySelector('.hero__contenido');
+  const ave  = document.querySelector('.golondrina--der');
+  const txt  = document.querySelector('.hero__contenido');
   const hero = document.querySelector('.hero');
   if (!ave || !txt || !hero) return;
 
-  // El rango de las animaciones es 100svh. Se mide con una sonda real en vez
-  // de suponerlo, porque es justo el valor del que se sospecha.
   const sonda = document.createElement('div');
   sonda.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:100svh;' +
                         'visibility:hidden;pointer-events:none';
@@ -28,101 +27,111 @@
   const panel = document.createElement('pre');
   panel.style.cssText = [
     'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:99999',
-    'margin:0', 'padding:.5rem .6rem',
-    'font:600 11px/1.45 ui-monospace,Menlo,monospace',
-    'background:#111', 'color:#0f0', 'white-space:pre',
-    'pointer-events:none', 'text-shadow:none',
+    'margin:0', 'padding:.4rem .5rem',
+    'font:600 10px/1.35 ui-monospace,Menlo,monospace',
+    'background:#000', 'color:#0f0', 'white-space:pre',
+    'text-shadow:none',
   ].join(';');
   document.body.appendChild(panel);
 
   const tyDe = (el) => new DOMMatrixReadOnly(getComputedStyle(el).transform).f;
+  const med  = (xs) => { const o = xs.slice().sort((a, b) => a - b);
+                         return o.length ? o[o.length >> 1] : 0; };
 
-  /* La misma curva que el CSS, para que "toca" siga siendo comparable. */
-  function curva(t) {
-    const x1 = 0.7, y1 = 0, x2 = 1, y2 = 1;
-    let lo = 0, hi = 1, sm = 0.5;
-    for (let i = 0; i < 30; i++) {
-      sm = (lo + hi) / 2;
-      const x = 3 * (1 - sm) ** 2 * sm * x1 + 3 * (1 - sm) * sm * sm * x2 + sm ** 3;
-      if (x < t) lo = sm; else hi = sm;
-    }
-    return 3 * (1 - sm) ** 2 * sm * y1 + 3 * (1 - sm) * sm * sm * y2 + sm ** 3;
+  let yAnt, aveAnt, ihAnt, congelado = false, tras = 0;
+  let traza = [], cambiosIh = [], saltos = [];
+  let picoSinc = 0, picoDAve = 0, heroCambio = '', svhCambio = '';
+  let soltado = false, cuadros = 0, fps = 0, t0 = performance.now();
+  const ih0 = window.innerHeight, hero0 = hero.offsetHeight, svh0 = sonda.offsetHeight;
+
+  function reiniciar() {
+    congelado = false; tras = 0; traza = []; cambiosIh = []; saltos = [];
+    picoSinc = 0; picoDAve = 0;
+    yAnt = window.scrollY; aveAnt = tyDe(ave); ihAnt = window.innerHeight;
   }
+  panel.addEventListener('click', reiniciar);
+  addEventListener('touchend',   () => { soltado = true;  }, { passive: true });
+  addEventListener('touchstart', () => { soltado = false; }, { passive: true });
+  reiniciar();
 
-  /* Medida independiente de la curva: ¿en qué punto de su recorrido CREE la
-     animación que está, comparado con el que le toca por el scroll? Si esto
-     se desfasa, el problema es de sincronía y no de keyframes. */
   function progresoPropio() {
     const a = ave.getAnimations()[0];
-    if (!a) return null;
-    const t = a.currentTime;
-    if (t == null) return null;
-    const v = (typeof t === 'object' && 'value' in t) ? t.value : t;
-    const d = a.effect.getComputedTiming().duration;
-    const dv = (d && typeof d === 'object' && 'value' in d) ? d.value : d;
-    return (dv ? v / dv : null);
+    if (!a || a.currentTime == null) return null;
+    const t = a.currentTime, d = a.effect.getComputedTiming().duration;
+    const tv = (typeof t === 'object' && 'value' in t) ? t.value : t;
+    const dv = (typeof d === 'object' && d && 'value' in d) ? d.value : d;
+    return dv ? tv / dv : null;
   }
 
-  const ih0 = window.innerHeight;
-  const hero0 = hero.offsetHeight;
-  let svh0 = sonda.offsetHeight;
-
-  let picoAve = 0, picoTxt = 0, picoSinc = 0, scrollDelPico = 0, traSoltar = false;
-  let heroCambio = '', ihCambio = '', svhCambio = '';
-  let soltado = false, cuadros = 0, fps = 0, t0 = performance.now();
-
-  addEventListener('touchend', () => { soltado = true; }, { passive: true });
-  addEventListener('touchstart', () => { soltado = false; }, { passive: true });
-
   function medir() {
-    const y = window.scrollY;
-    const svh = sonda.offsetHeight;
-    const rango = svh || 1;
-    const p = Math.min(1, Math.max(0, y / rango));
+    const y = window.scrollY, ih = window.innerHeight, svh = sonda.offsetHeight;
+    const p = Math.min(1, Math.max(0, y / (svh || 1)));
+    const aveY = tyDe(ave);
+    const d = y - yAnt, dAve = aveY - aveAnt;
 
-    // Lo que dicen los keyframes: ave -82% de su alto, texto +22% del suyo.
-    const e = curva(p);          // progreso ya pasado por la curva
-    const aveEsp = e * -0.82 * ave.offsetHeight;
-    const txtEsp = e *  0.22 * txt.offsetHeight;
-    const opaEsp = 1 + e * (0.15 - 1);
+    const ihCambioAhora = ih !== ihAnt;
+    if (ihCambioAhora) { cambiosIh.push(Math.round(y)); ihAnt = ih; }
+    if (hero.offsetHeight !== hero0) heroCambio = ' ¡' + hero.offsetHeight + '!';
+    if (svh !== svh0) svhCambio = ' ¡' + svh + '!';
 
-    const aveReal = tyDe(ave);
-    const txtReal = tyDe(txt);
-    const opaReal = parseFloat(getComputedStyle(txt).opacity);
+    const pp = progresoPropio();
+    if (pp !== null) picoSinc = Math.max(picoSinc, Math.abs(pp - p));
+    picoDAve = Math.max(picoDAve, Math.abs(dAve));
 
-    const dAve = Math.abs(aveReal - aveEsp);
-    const dOpa = Math.abs(opaReal - opaEsp);
+    if (!congelado) {
+      traza.push({ d: Math.round(d), y: Math.round(y), raro: false });
+      if (traza.length > 22) traza.shift();
 
-    if (dAve > picoAve) { picoAve = dAve; scrollDelPico = Math.round(y); traSoltar = soltado; }
-    if (dOpa > picoTxt) picoTxt = dOpa;
+      // Vecinos anteriores, sin contar el fotograma actual.
+      const prev = traza.slice(-8, -1).map((f) => Math.abs(f.d)).filter((v) => v > 0);
+      const m = med(prev);
+      const ultimoSigno = (() => {
+        for (let i = traza.length - 2; i >= 0; i--) if (traza[i].d !== 0) return Math.sign(traza[i].d);
+        return 0;
+      })();
 
-    if (hero.offsetHeight !== hero0) heroCambio = ' ¡CAMBIÓ a ' + hero.offsetHeight + '!';
-    if (window.innerHeight !== ih0)  ihCambio   = '→' + window.innerHeight;
-    if (svh !== svh0)                svhCambio  = ' ¡CAMBIÓ a ' + svh + '!';
+      const reversion = ultimoSigno !== 0 && Math.sign(d) !== 0 &&
+                        Math.sign(d) !== ultimoSigno && Math.abs(d) >= 15;
+      const desmedido = Math.abs(d) >= 25 && m > 0.5 && Math.abs(d) >= 4 * m;
+
+      if (traza.length > 8 && (reversion || desmedido)) {
+        traza[traza.length - 1].raro = true;
+        saltos.push({
+          d: Math.round(d), y: Math.round(y), dAve: dAve.toFixed(1),
+          ih: ihCambioAhora,
+          tipo: reversion ? 'reversión' : 'desmedido',
+          soltado: soltado,
+        });
+        congelado = true;
+      }
+    } else if (tras < 4) {                     // unos pocos fotogramas más de cola
+      tras++;
+      traza.push({ d: Math.round(d), y: Math.round(y), raro: false });
+    }
+
+    yAnt = y; aveAnt = aveY;
 
     cuadros++;
     const dt = performance.now() - t0;
     if (dt > 500) { fps = Math.round(cuadros * 1000 / dt); cuadros = 0; t0 += dt; }
 
-    const pp = progresoPropio();
-    if (pp !== null && Math.abs(pp - p) > picoSinc) picoSinc = Math.abs(pp - p);
+    const s = saltos[0];
+    panel.textContent =
+      'scroll ' + Math.round(y) + '   progreso ' + p.toFixed(3) + '   fps ' + fps + '\n' +
+      'svh ' + svh0 + svhCambio + '   ih ' + ih0 + '→' + ih +
+        '   cambios ' + cambiosIh.length + (cambiosIh.length ? ' @' + cambiosIh.join(',') : '') + '\n' +
+      'hero ' + hero0 + heroCambio + '   sinc ' + picoSinc.toFixed(3) +
+        '   ave/frame máx ' + picoDAve.toFixed(1) + 'px\n' +
+      '── Δscroll por fotograma ──\n' +
+      traza.map((f) => (f.raro ? '[' + f.d + ']' : String(f.d))).join(' ') + '\n' +
+      (s
+        ? '■ SALTO ' + s.d + 'px @ scroll ' + s.y + '  (' + s.tipo + ')\n' +
+          '  el ave se movió ' + s.dAve + 'px de golpe\n' +
+          '  la barra cambió ese frame: ' + (s.ih ? 'SÍ' : 'no') +
+            '   tras soltar: ' + (s.soltado ? 'SÍ' : 'no') + '\n' +
+          'CONGELADO · toca el panel para reiniciar'
+        : 'sin saltos aún · sigue haciendo scroll');
 
-    if (cuadros % 6 === 0) {
-      const n = (v, d) => v.toFixed(d);
-      panel.textContent =
-        'scroll ' + Math.round(y) + '   toca ' + n(p, 3) +
-          '   cree ' + (pp === null ? '?' : n(pp, 3)) + '   fps ' + fps + '\n' +
-        'svh ' + svh0 + svhCambio + '   ih ' + ih0 + ihCambio + '\n' +
-        'hero ' + hero0 + heroCambio + '\n' +
-        'ave  real ' + n(aveReal, 1) + '  toca ' + n(aveEsp, 1) + '   Δ ' + n(dAve, 1) + '\n' +
-        'opa  real ' + n(opaReal, 2) + '  toca ' + n(opaEsp, 2) + '   Δ ' + n(dOpa, 2) + '\n' +
-        'PICOS  Δave ' + n(picoAve, 1) + 'px   Δopa ' + n(picoTxt, 2) +
-          '   Δsinc ' + n(picoSinc, 3) + '\n' +
-        '       en scroll ' + scrollDelPico + '   tras soltar: ' + (traSoltar ? 'SÍ' : 'no') + '\n' +
-        'anims ' + document.getAnimations().filter((a) => a.timeline &&
-                     a.timeline.constructor.name.indexOf('Scroll') >= 0).length +
-        ' ligadas al scroll  ·  ' + document.getAnimations().length + ' totales';
-    }
     requestAnimationFrame(medir);
   }
   requestAnimationFrame(medir);

@@ -447,13 +447,7 @@ html.desbloqueado .acceso { display: none; }
       animation-timeline: scroll(root block);
       animation-range: 0 100svh;
       animation-duration: auto;
-      /* NO linear. En iOS la animación se queda congelada en el arranque y
-         luego se pone al día de golpe; con la curva retrasada, ese primer
-         tramo apenas mueve nada, así que el salto pasa de 39px a 11px y la
-         opacidad de ENARA de .68 a .91. El viaje completo se conserva: la
-         curva llega igual a 1 al final del hero. De paso el nombre se lee
-         nítido más rato y las aves arrancan acelerando, que es más de ave. */
-      animation-timing-function: cubic-bezier(.7, 0, 1, 1);
+      animation-timing-function: linear;
       animation-fill-mode: both;
     }
     .golondrina--izq { animation-name: hero-ave-izq; }
